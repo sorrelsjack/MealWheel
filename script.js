@@ -1,5 +1,5 @@
 const degrees = 360;
-let slices = ['a', 'a', 'a', 'a', 'a', 'a'];
+let slices = ['PDQ', 'Chick-Fil-A', 'Smashburger', 'Taco Bell', 'KFC', 'McDonalds'];
 let colors = ['#264653', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
 
 const initialize = () => {
@@ -29,6 +29,7 @@ const getColors = () => {
     return sets;
 }
 
+// TODO: Destroy chart when a new slice is added
 const drawPieChart = () => {
     const context = document.getElementById("circle-canvas").getContext("2d");
     const chart = new Chart(context, {
@@ -36,12 +37,21 @@ const drawPieChart = () => {
         data: {
             datasets: [{
                 data: getChartValues(),
-                backgroundColor: getColors()
+                backgroundColor: getColors(),
             }]
         },
         options: {
             tooltips: {
                 enabled: false
+            },
+            plugins: {
+                datalabels: {
+                    font: {
+                        size: 20
+                    },
+                    color: 'white',
+                    formatter: (value, context) => slices[context.dataIndex]
+                }
             }
         }
     })

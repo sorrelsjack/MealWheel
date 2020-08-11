@@ -3,6 +3,7 @@
 }
 body {
     margin-top: 20px;
+    margin-bottom: 20px;
 }
 h1 {
     text-align: center;
@@ -16,7 +17,7 @@ h1 {
 }
 .indicator {
     position: relative;
-    margin-bottom: -10px;
+    margin-bottom: -20px;
     width: 0; 
     height: 0; 
     border-left: 20px solid transparent;
