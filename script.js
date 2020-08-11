@@ -1,10 +1,9 @@
-const degrees = 360;
+let degrees = 360;
 let slices = ['PDQ', 'Chick-Fil-A', 'Smashburger', 'Taco Bell', 'KFC', 'McDonalds'];
 let colors = ['#264653', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
 
 // Credit: http://jsbin.com/qefada/11/edit?html,js,output
 var sliceDeg = 360 / slices.length;
-var deg = getRandomInt(0, 360);
 var canvas = null;
 var ctx = null;
 var width = 0;
@@ -31,14 +30,14 @@ const drawText = (deg, text) => {
     ctx.save();
     ctx.translate(center, center);
     ctx.rotate(degToRad(deg));
-    ctx.textAlign = "right";
+    ctx.textAlign = "center";
     ctx.fillStyle = "#fff";
-    ctx.font = 'bold 20px sans-serif';
-    ctx.fillText(text, 130, 10);
+    ctx.font = 'bold 30px sans-serif';
+    ctx.fillText(text, 170, 10);
     ctx.restore();
 }
 
-const drawImg = () => {
+const drawChart = () => {
     canvas = document.getElementById('circle-canvas');
     ctx = canvas.getContext('2d');
     width = canvas.width;
@@ -46,26 +45,14 @@ const drawImg = () => {
 
     ctx.clearRect(0, 0, width, width);
     for (var i = 0; i < slices.length; i++) {
-        drawSlice(deg, getColors()[i]);
-        drawText(deg + sliceDeg / 2, slices[i]);
-        deg += sliceDeg;
+        drawSlice(degrees, getColors()[i]);
+        drawText(degrees + sliceDeg / 2, slices[i]);
+        degrees += sliceDeg;
     }
 }
 
 const initialize = () => {
-    drawImg();
-    //drawPieChart();
-}
-
-const getChartValues = () => {
-    let values = [];
-    const percent = 1 / slices.length;
-
-    for (let i = 0; i < slices.length; i++) {
-        values.push(percent);
-    }
-
-    return values;
+    drawChart();
 }
 
 const getColors = () => {
@@ -78,34 +65,6 @@ const getColors = () => {
     }
 
     return sets;
-}
-
-// TODO: Destroy chart when a new slice is added
-const drawPieChart = () => {
-    const context = document.getElementById("circle-canvas").getContext("2d");
-    const chart = new Chart(context, {
-        type: 'pie',
-        data: {
-            datasets: [{
-                data: getChartValues(),
-                backgroundColor: getColors(),
-            }]
-        },
-        options: {
-            tooltips: {
-                enabled: false
-            },
-            plugins: {
-                datalabels: {
-                    font: {
-                        size: 20
-                    },
-                    color: 'white',
-                    formatter: (value, context) => slices[context.dataIndex]
-                }
-            }
-        }
-    })
 }
 
 const measureClickVelocity = () => {
