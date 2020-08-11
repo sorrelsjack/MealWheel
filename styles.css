@@ -1,26 +1,29 @@
 * {
     margin: auto;
 }
+body {
+    margin-top: 20px;
+}
+h1 {
+    text-align: center;
+}
+.circle-container {
+    margin-top: 20px;
+}
 .circle {
-    background-image: 
-    conic-gradient(
-    #4e79a7 0,
-    #4e79a7 38%,
-    #f28e2c 0,
-    #f28e2c 61%,
-    #e15759 0,
-    #e15759 77%,
-    #76b7b2 0,
-    #76b7b2 87%,
-    #59a14f 0,
-    #59a14f 93%,
-    #edc949 0,
-    #edc949 100%
-    );
     height: 600px;
     width: 600px;
-    border-radius: 50%;
 }
 .indicator {
-    
+    position: relative;
+    margin-bottom: -10px;
+    width: 0; 
+    height: 0; 
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid #f00;
+}
+.input-container {
+    padding-top: 20px;
+    text-align: center;
 }
