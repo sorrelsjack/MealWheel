@@ -1,7 +1,7 @@
 let degrees = 360;
 let slices = ['PDQ', 'Chick-Fil-A', 'Smashburger', 'Taco Bell', 'KFC', 'McDonalds'];
-//let colors = ['#264653', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
-let colors = ['#264653', '#e9c46a'];
+let colors = ['#264653', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
+//let colors = ['#264653', '#e9c46a'];
 
 // Credit: http://jsbin.com/qefada/11/edit?html,js,output
 var sliceDeg = 360 / slices.length;
@@ -11,6 +11,13 @@ var width = 0;
 var center = 0;
 
 let rotateDegree = 0;
+
+let firstX = 0;
+let firstY = 0;
+let secondX = 0;
+let secondY = 0;
+let clickDuration = 0;
+let clickDurationIntervalId = null;
 
 const getRandomInt = (min, max) => {
     min = Math.ceil(min);
@@ -42,6 +49,7 @@ const drawText = (deg, text) => {
     ctx.restore();
 }
 
+// TODO: Simulate deceleration
 const rotateChart = () => {
     const c = document.getElementById('circle-canvas');
     c.style.transform = `rotate(${rotateDegree += 2}deg)`;
@@ -79,8 +87,13 @@ const getColors = () => {
     return sets;
 }
 
+const calculateDistanceBetweenPoints = () => Math.sqrt(Math.pow((secondX - firstX), 2) + Math.pow((secondY - firstY), 2));
+
 const measureClickVelocity = () => {
-    // TODO: In the background, go through the indexes at a comparable speed to the pie slices
+    // TODO: Sometimes the number is Infinity?
+    const distance = calculateDistanceBetweenPoints();
+    clickVelocity = distance / clickDuration;
+    clickDuration = secondX = firstX = secondY = firstY = 0;
 }
 
 const resetChart = () => {
@@ -96,4 +109,22 @@ const handleAddClicked = () => {
     const place = document.getElementById('place-input').value;
     slices.push(place);
     resetChart();
+}
+
+const trackClickDuration = () => clickDuration += 1;
+
+const handleMouseDown = (e) => {
+    // TODO: Limit tracked clicks to those inside 600x600 circle
+    clickDurationIntervalId = window.setInterval(trackClickDuration, 1);
+    firstX = e.offsetX;
+    firstY = e.offsetY;
+}
+
+const handleMouseUp = (e) => {
+    if (!firstX && !firstY) return;
+    window.clearInterval(clickDurationIntervalId);
+    secondX = e.offsetX;
+    secondY = e.offsetY;
+
+    measureClickVelocity();
 }
