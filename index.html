@@ -1,27 +1,36 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Meal Wheel</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
     <script src="script.js"></script>
 </head>
+
 <body onload="initialize()">
-    <div class="place-list-container">
-        <ul class="place-list">
-            <li>Hi</li>
-            <li>Hello</li>
-        </ul>
+    <h1>Meal Wheel</h1>
+    <div class="wrapper">
+        <div class="place-list-container column">
+            <h2>Place List</h2>
+            <ul class="place-list">
+                <li>Hi</li>
+                <li>Hello</li>
+            </ul>
+        </div>
+        <div class="main-container column">
+            <div class="circle-container" id="circle-container" onmousedown="handleMouseDown(event)"
+                onmouseleave="handleMouseUp(event)" onmouseup="handleMouseUp(event)">
+                <div class="indicator"></div>
+                <canvas width="600" height="600" id="circle-canvas">
+            </div>
+            <div class="input-container">
+                <input placeholder="Place" id="place-input"></input>
+                <button onclick="handleAddClicked()">Add</button>
+            </div>
+        </div>
+        <div class="column"></div>
     </div>
-    <div>
-        <h1>Meal Wheel</h1>
-        <div class="circle-container" id="circle-container" onmousedown="handleMouseDown(event)" onmouseleave="handleMouseUp(event)" onmouseup="handleMouseUp(event)">
-            <div class="indicator"></div>
-            <canvas width="600" height="600" id="circle-canvas"></div>
-        </div>
-        <div class="input-container">
-            <input placeholder="Place" id="place-input"></input>
-            <button onclick="handleAddClicked()">Add</button>
-        </div>
     </div>
 </body>
+
 </html>
