@@ -9,15 +9,16 @@ body {
 h1 {
     text-align: center;
 }
+h2 {
+    margin-bottom: 10px;
+}
 .wrapper {
     display: flex;
     flex-direction: row;
-    background-color: blue;
 }
 .column {
     flex: 1;
     height: 100%;
-    background-color: aqua;
 }
 .main-container {
     margin-top: 20px;
@@ -42,5 +43,9 @@ h1 {
 .place-list-container {
     margin-top: 20px;
     text-align: center;
-    list-style-position: inside;
+}
+ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
 }

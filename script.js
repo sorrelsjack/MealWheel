@@ -1,7 +1,6 @@
 let degrees = 360;
 let slices = ['PDQ', 'Chick-Fil-A', 'Smashburger', 'Taco Bell', 'KFC', 'McDonalds'];
 let colors = ['#264653', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
-//let colors = ['#264653', '#e9c46a'];
 
 // Credit: http://jsbin.com/qefada/11/edit?html,js,output
 var sliceDeg = 360 / slices.length;
@@ -103,11 +102,22 @@ const resetChart = () => {
     rotateDegree = 0;
 }
 
+// TODO: Add ability to remove items
+// TODO: In local storage, maybe add a param to track how many times a place has come up, and store if its 'active' or not
+const addItemToList = (value) => {
+    const placeList = document.getElementById('place-list');
+    const placeListItem = document.createElement('li');
+    placeListItem.appendChild(document.createTextNode(value));
+    placeList.appendChild(placeListItem);
+}
+
 // TODO: Save places to local storage and load them when the page comes up
 // TODO: Add place list and the ability to delete places
+// TODO: Add limit to number of items
 const handleAddClicked = () => {
     const place = document.getElementById('place-input').value;
     slices.push(place);
+    addItemToList(place);
     resetChart();
 }
 
