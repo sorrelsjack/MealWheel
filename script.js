@@ -1,9 +1,9 @@
 let degrees = 360;
-let slices = ['PDQ', 'Chick-Fil-A', 'Smashburger', 'Taco Bell', 'KFC', 'McDonalds'];
+let places = [];
 let colors = ['#264653', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
 
 // Credit: http://jsbin.com/qefada/11/edit?html,js,output
-var sliceDeg = 360 / slices.length;
+var sliceDeg = 360 / places.length;
 var canvas = null;
 var ctx = null;
 var width = 0;
@@ -24,7 +24,7 @@ const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-const calculateSliceDeg = () => sliceDeg = 360 / slices.length;
+const calculateSliceDeg = () => sliceDeg = 360 / places.length;
 
 const degToRad = (deg) => deg * Math.PI / 180;
 
@@ -54,6 +54,7 @@ const rotateChart = () => {
     c.style.transform = `rotate(${rotateDegree += 2}deg)`;
 }
 
+// TODO: Draw a whole circle if there's no slices defined
 const drawChart = () => {
     canvas = document.getElementById('circle-canvas');
     ctx = canvas.getContext('2d');
@@ -61,11 +62,13 @@ const drawChart = () => {
     center = width / 2;
 
     ctx.clearRect(0, 0, width, width);
-    for (var i = 0; i < slices.length; i++) {
+    for (var i = 0; i < places.length; i++) {
         drawSlice(degrees, getColors()[i]);
-        drawText(degrees + sliceDeg / 2, slices[i]);
+        drawText(degrees + sliceDeg / 2, places[i]);
         degrees += sliceDeg;
     }
+
+    Draggable.create("#circle-canvas", { type: "rotation", dragResistance: 0 });
 
     //window.setInterval(rotateChart, 100)
 }
@@ -76,7 +79,7 @@ const initialize = () => {
 
 const getColors = () => {
     // TODO: Stop colors from touching
-    const numberOfColorSetsNeeded = Math.ceil(slices.length / colors.length);
+    const numberOfColorSetsNeeded = Math.ceil(places.length / colors.length);
     let sets = [];
 
     for (let i = 0; i < numberOfColorSetsNeeded; i++) {
@@ -113,10 +116,10 @@ const addItemToList = (value) => {
 
 // TODO: Save places to local storage and load them when the page comes up
 // TODO: Add place list and the ability to delete places
-// TODO: Add limit to number of items
+// TODO: Add limit to number of items... 8?
 const handleAddClicked = () => {
     const place = document.getElementById('place-input').value;
-    slices.push(place);
+    places.push(place);
     addItemToList(place);
     resetChart();
 }
@@ -130,6 +133,7 @@ const handleMouseDown = (e) => {
     firstY = e.offsetY;
 }
 
+// Angular velocity
 const handleMouseUp = (e) => {
     if (!firstX && !firstY) return;
     window.clearInterval(clickDurationIntervalId);
