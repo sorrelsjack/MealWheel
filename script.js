@@ -1,18 +1,11 @@
 let draggableCircle = null;
+let svg = null;
+const svgNS = 'http://www.w3.org/2000/svg';
 
-let degrees = 360;
 let places = ['CFA', 'KFC'];
 let colors = ['#264653', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
 
-// Credit: http://jsbin.com/qefada/11/edit?html,js,output
-var sliceDeg = 360 / places.length;
-var canvas = null;
-var ctx = null;
-var width = 0;
-var center = 0;
-
-let rotateDegree = 0;
-
+let cumulativePercent = 0;
 let firstX = 0;
 let firstY = 0;
 let secondX = 0;
@@ -29,51 +22,62 @@ const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-const calculateSliceDeg = () => sliceDeg = 360 / places.length;
+const getCoordinatesForPercent = (percent) => {
+    const x = Math.cos(2 * Math.PI * percent);
+    const y = Math.sin(2 * Math.PI * percent);
 
-const degToRad = (deg) => deg * Math.PI / 180;
+    return [x, y];
+}
 
-const drawSlice = (deg, color) => {
-    ctx.beginPath();
-    ctx.fillStyle = color;
-    ctx.moveTo(center, center);
-    ctx.arc(center, center, width / 2, degToRad(deg), degToRad(deg + sliceDeg));
-    ctx.lineTo(center, center);
-    ctx.fill();
+const drawSlice = (percent, color) => {
+    const [startX, startY] = getCoordinatesForPercent(cumulativePercent);
+    cumulativePercent += percent;
+    const [endX, endY] = getCoordinatesForPercent(cumulativePercent);
+
+    const largeArcFlag = percent > .5 ? 1 : 0;
+
+    const pathData = [
+        `M ${startX} ${startY}`,
+        `A 1 1 0 ${largeArcFlag} 1 ${endX} ${endY}`,
+        `L 0 0`,
+    ].join(' ');
+
+    const path = document.createElementNS(svgNS, 'path');
+    path.setAttribute('d', pathData);
+    path.setAttribute('fill', color);
+    path.setAttribute('id', `${places[0]}-path`)
+    // TODO: Fix so text actually shows up
+    const text = document.createElementNS(svgNS, 'text');
+    text.setAttributeNS(svgNS, 'x', '0');
+    text.setAttributeNS(svgNS, 'y', '0');
+    text.setAttributeNS(svgNS, 'fill', '#000000');
+    text.setAttributeNS(svgNS, 'stroke', '#000000');
+    text.setAttributeNS(svgNS, 'font-size', '20');
+    text.setAttributeNS(svgNS, 'style', 'z-index: 2; background-color: #FF00000;');
+    text.setAttributeNS(svgNS, 'text-anchor', 'middle')
+    const textNode = document.createTextNode('Test :)');
+    text.appendChild(textNode);
+    svg.appendChild(path);
+    svg.appendChild(text);
 }
 
 const drawText = (deg, text) => {
-    ctx.save();
-    ctx.translate(center, center);
-    ctx.rotate(degToRad(deg));
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#fff";
-    ctx.font = 'bold 30px sans-serif';
-    ctx.fillText(text, 170, 10);
-    ctx.restore();
-}
 
-// TODO: Simulate deceleration
-const rotateChart = () => {
-    const c = document.getElementById('circle-canvas');
-    c.style.transform = `rotate(${rotateDegree += 2}deg)`;
 }
 
 // TODO: Draw a whole circle if there's no slices defined
+// Credit: https://medium.com/hackernoon/a-simple-pie-chart-in-svg-dbdd653b6936
 const drawChart = () => {
-    canvas = document.getElementById('circle-canvas');
-    ctx = canvas.getContext('2d');
-    width = canvas.width;
-    center = width / 2;
+    svg = document.getElementById('circle-svg');
 
-    ctx.clearRect(0, 0, width, width);
-    for (var i = 0; i < places.length; i++) {
-        drawSlice(degrees, getColors()[i]);
-        drawText(degrees + sliceDeg / 2, places[i]);
-        degrees += sliceDeg;
+    numberOfSlices = places.length;
+    slicePercentage = 1 / numberOfSlices;
+
+    for (let i = 0; i < numberOfSlices; i++) {
+        drawSlice(slicePercentage, colors[i]);
     }
 
-    draggableCircle = Draggable.create(canvas, { type: 'rotation', dragResistance: 0 })[0];
+    draggableCircle = Draggable.create('#circle-svg-container', { type: 'rotation', dragResistance: 0 })[0];
     // Angular velocity = change in angular displacement
     draggableCircle.addEventListener('press', () => {
         clickDurationIntervalId = window.setInterval(trackClickDuration, 1);
@@ -81,13 +85,13 @@ const drawChart = () => {
         //firstY = e.offsetY;
         firstAngle = draggableCircle.rotation;
     });
-    draggableCircle.addEventListener('dragend', () => { 
+    draggableCircle.addEventListener('dragend', () => {
         //if (!firstX && !firstY) return;
         window.clearInterval(clickDurationIntervalId);
         //secondX = e.offsetX;
         //secondY = e.offsetY;
         secondAngle = draggableCircle.endRotation;
-    
+
         measureClickVelocity();
     });
 
@@ -117,19 +121,16 @@ const measureClickVelocity = () => {
     //const distance = calculateDistanceBetweenPoints();
     const distance = secondAngle - firstAngle;
     clickVelocity = distance / clickDuration;
-    gsap.to('#circle-canvas', { rotation: draggableCircle.rotation + 180, duration: 1 })
-    draggableCircle.kill();
-    drawChart();
+    gsap.to('#circle-svg-container', { rotation: draggableCircle.rotation + 360, duration: 1 }) // TODO: Fix a problem here where the wheel flickers
     clickDuration = secondX = firstX = secondY = firstY = firstAngle = secondAngle = 0;
 }
 
 const resetChart = () => {
-    calculateSliceDeg();
     clearInterval();
     drawChart();
-    rotateDegree = 0;
 }
 
+// TODO: Fix issue where input is unclickable
 // TODO: Add ability to remove items
 // TODO: In local storage, maybe add a param to track how many times a place has come up, and store if its 'active' or not
 const addItemToList = (value) => {

@@ -22,7 +22,9 @@
             <div class="circle-container" id="circle-container" onmousedown="handleMouseDown(event)"
                 onmouseleave="handleMouseUp(event)" onmouseup="handleMouseUp(event)">
                 <div class="indicator"></div>
-                <canvas width="600" height="600" id="circle-canvas">
+                <div id="circle-svg-container">
+                    <svg viewBox="-1 -1 2 2" width="600" height="600" style="transform: rotate(-0.25turn)" id="circle-svg"></svg>
+                </div>
             </div>
             <div class="input-container">
                 <input placeholder="Place" id="place-input"></input>
