@@ -1,5 +1,7 @@
+let draggableCircle = null;
+
 let degrees = 360;
-let places = [];
+let places = ['CFA', 'KFC'];
 let colors = ['#264653', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
 
 // Credit: http://jsbin.com/qefada/11/edit?html,js,output
@@ -15,6 +17,9 @@ let firstX = 0;
 let firstY = 0;
 let secondX = 0;
 let secondY = 0;
+let firstAngle = 0;
+let secondAngle = 0;
+
 let clickDuration = 0;
 let clickDurationIntervalId = null;
 
@@ -68,7 +73,23 @@ const drawChart = () => {
         degrees += sliceDeg;
     }
 
-    Draggable.create("#circle-canvas", { type: "rotation", dragResistance: 0 });
+    draggableCircle = Draggable.create(canvas, { type: 'rotation', dragResistance: 0 })[0];
+    // Angular velocity = change in angular displacement
+    draggableCircle.addEventListener('press', () => {
+        clickDurationIntervalId = window.setInterval(trackClickDuration, 1);
+        //firstX = e.offsetX;
+        //firstY = e.offsetY;
+        firstAngle = draggableCircle.rotation;
+    });
+    draggableCircle.addEventListener('dragend', () => { 
+        //if (!firstX && !firstY) return;
+        window.clearInterval(clickDurationIntervalId);
+        //secondX = e.offsetX;
+        //secondY = e.offsetY;
+        secondAngle = draggableCircle.endRotation;
+    
+        measureClickVelocity();
+    });
 
     //window.setInterval(rotateChart, 100)
 }
@@ -93,9 +114,13 @@ const calculateDistanceBetweenPoints = () => Math.sqrt(Math.pow((secondX - first
 
 const measureClickVelocity = () => {
     // TODO: Sometimes the number is Infinity?
-    const distance = calculateDistanceBetweenPoints();
+    //const distance = calculateDistanceBetweenPoints();
+    const distance = secondAngle - firstAngle;
     clickVelocity = distance / clickDuration;
-    clickDuration = secondX = firstX = secondY = firstY = 0;
+    gsap.to('#circle-canvas', { rotation: draggableCircle.rotation + 180, duration: 1 })
+    draggableCircle.kill();
+    drawChart();
+    clickDuration = secondX = firstX = secondY = firstY = firstAngle = secondAngle = 0;
 }
 
 const resetChart = () => {
@@ -128,17 +153,17 @@ const trackClickDuration = () => clickDuration += 1;
 
 const handleMouseDown = (e) => {
     // TODO: Limit tracked clicks to those inside 600x600 circle
-    clickDurationIntervalId = window.setInterval(trackClickDuration, 1);
+    /*clickDurationIntervalId = window.setInterval(trackClickDuration, 1);
     firstX = e.offsetX;
-    firstY = e.offsetY;
+    firstY = e.offsetY;*/
 }
 
 // Angular velocity
-const handleMouseUp = (e) => {
+const handleMouseUp = (e) => {/*
     if (!firstX && !firstY) return;
     window.clearInterval(clickDurationIntervalId);
     secondX = e.offsetX;
     secondY = e.offsetY;
 
-    measureClickVelocity();
+    measureClickVelocity();*/
 }
