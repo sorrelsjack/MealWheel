@@ -90,12 +90,13 @@ const drawChart = () => {
         measureClickVelocity();
 
         places.forEach(p => {
-            if (Draggable.hitTest(`#${p}-path`, '#indicator') && clickDuration === 0) console.log(`Hit ${p}`); // TODO: Make sure to track this only when the wheel has come to a complete stop!
-        });
-        
+            if (Draggable.hitTest(`#${p}-path`, '#indicator') && clickDuration === 0) {
+                const results = document.getElementById('results');
+                results.innerText = `Looks like you're eating at ${p}!`
+                results.style.visibility = 'visible';
+            }
+        });  
     });
-
-    //window.setInterval(rotateChart, 100)
 }
 
 const initialize = () => {
@@ -103,7 +104,6 @@ const initialize = () => {
 }
 
 const getColors = () => {
-    // TODO: Stop colors from touching
     const numberOfColorSetsNeeded = Math.ceil(places.length / colors.length);
     let sets = [];
 
@@ -116,13 +116,16 @@ const getColors = () => {
 
 const calculateDistanceBetweenPoints = () => Math.sqrt(Math.pow((secondX - firstX), 2) + Math.pow((secondY - firstY), 2));
 
+// https://stackoverflow.com/questions/52039421/java-2d-slow-down-rotation-like-a-wheel-of-fortune Hmmm
 const measureClickVelocity = () => {
-    // TODO: Sometimes the number is Infinity?
     //const distance = calculateDistanceBetweenPoints();
     const distance = secondAngle - firstAngle;
-    clickVelocity = distance / clickDuration;
+    clickVelocity = Math.abs(distance / clickDuration); // Number of revolutions per second
+    //const acceleration = clickVelocity / clickDuration; // TODO: Continuously be calculating distance and duration and adjust accel
+    // TODO: Get decel
     // TODO: 'Backwards' spins
-    gsap.fromTo('#circle-svg-container', { rotation: draggableCircle.endRotation }, { rotation: draggableCircle.endRotation + 360, duration: 1 });
+    // TODO: Fix issue where the it flashes
+    gsap.fromTo('#circle-svg-container', { rotation: draggableCircle.endRotation }, { rotation: draggableCircle.endRotation + (360 * clickVelocity * 2), duration: 2 });
     clickDuration = secondX = firstX = secondY = firstY = firstAngle = secondAngle = 0;
 }
 
@@ -144,6 +147,7 @@ const addItemToList = (value) => {
 
 // TODO: Save places to local storage and load them when the page comes up
 // TODO: Add place list and the ability to delete places
+// TODO: Validation to see if a place was already added
 const handleAddClicked = () => {
     if (places.length === 8) return;
     const place = document.getElementById('place-input').value;
@@ -153,20 +157,3 @@ const handleAddClicked = () => {
 }
 
 const trackClickDuration = () => clickDuration += 1;
-
-const handleMouseDown = (e) => {
-    // TODO: Limit tracked clicks to those inside 600x600 circle
-    /*clickDurationIntervalId = window.setInterval(trackClickDuration, 1);
-    firstX = e.offsetX;
-    firstY = e.offsetY;*/
-}
-
-// Angular velocity
-const handleMouseUp = (e) => {/*
-    if (!firstX && !firstY) return;
-    window.clearInterval(clickDurationIntervalId);
-    secondX = e.offsetX;
-    secondY = e.offsetY;
-
-    measureClickVelocity();*/
-}

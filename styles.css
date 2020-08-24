@@ -12,6 +12,11 @@ h1 {
 h2 {
     margin-bottom: 10px;
 }
+.results-container {
+    margin-bottom: -10px;
+    text-align: center;
+    visibility: hidden;
+}
 .wrapper {
     display: flex;
     flex-direction: row;
