@@ -26,6 +26,29 @@ h2 {
 .circle-container {
     text-align: center;
 }
+.circle-text {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    /* Three
+    left: 250px;
+    top: 200px;
+    right: 0;
+    margin: auto;
+    */
+
+    /* Two
+    left: 300px;
+    top: 300px;
+    right: 0;
+    margin: auto;
+    */
+    z-index: 1;
+    color: white;
+}
 .indicator {
     position: relative;
     margin-bottom: -30px;

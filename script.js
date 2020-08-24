@@ -3,7 +3,7 @@ let svg = null;
 const svgNS = 'http://www.w3.org/2000/svg';
 
 let places = ['CFA', 'KFC'];
-let colors = ['#264653', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
+let colors = ['#5390d9', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51', '#ef476f', '#bc00dd', '#6a00f4']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
 
 let cumulativePercent = 0;
 let firstX = 0;
@@ -29,7 +29,7 @@ const getCoordinatesForPercent = (percent) => {
     return [x, y];
 }
 
-const drawSlice = (percent, color) => {
+const drawSlice = (percent, place, color) => {
     const [startX, startY] = getCoordinatesForPercent(cumulativePercent);
     cumulativePercent += percent;
     const [endX, endY] = getCoordinatesForPercent(cumulativePercent);
@@ -45,20 +45,15 @@ const drawSlice = (percent, color) => {
     const path = document.createElementNS(svgNS, 'path');
     path.setAttribute('d', pathData);
     path.setAttribute('fill', color);
-    path.setAttribute('id', `${places[0]}-path`)
+    path.setAttribute('id', `${place}-path`);
     // TODO: Fix so text actually shows up
-    const text = document.createElementNS(svgNS, 'text');
-    text.setAttributeNS(svgNS, 'x', '0');
-    text.setAttributeNS(svgNS, 'y', '0');
-    text.setAttributeNS(svgNS, 'fill', '#000000');
-    text.setAttributeNS(svgNS, 'stroke', '#000000');
-    text.setAttributeNS(svgNS, 'font-size', '20');
-    text.setAttributeNS(svgNS, 'style', 'z-index: 2; background-color: #FF00000;');
-    text.setAttributeNS(svgNS, 'text-anchor', 'middle')
-    const textNode = document.createTextNode('Test :)');
+    const text = document.createElement('div');
+    text.setAttribute('class', 'circle-text');
+    //text.setAttribute('style', `transform: rotate(-0.25turn)`)
+    const textNode = document.createTextNode('Test');
     text.appendChild(textNode);
     svg.appendChild(path);
-    svg.appendChild(text);
+    document.getElementById('circle-svg-container').insertBefore(text, document.getElementById('circle-svg-container').firstChild);
 }
 
 const drawText = (deg, text) => {
@@ -74,7 +69,7 @@ const drawChart = () => {
     slicePercentage = 1 / numberOfSlices;
 
     for (let i = 0; i < numberOfSlices; i++) {
-        drawSlice(slicePercentage, colors[i]);
+        drawSlice(slicePercentage, places[i], colors[i]);
     }
 
     draggableCircle = Draggable.create('#circle-svg-container', { type: 'rotation', dragResistance: 0 })[0];
@@ -93,6 +88,11 @@ const drawChart = () => {
         secondAngle = draggableCircle.endRotation;
 
         measureClickVelocity();
+
+        places.forEach(p => {
+            if (Draggable.hitTest(`#${p}-path`, '#indicator') && clickDuration === 0) console.log(`Hit ${p}`); // TODO: Make sure to track this only when the wheel has come to a complete stop!
+        });
+        
     });
 
     //window.setInterval(rotateChart, 100)
@@ -121,7 +121,8 @@ const measureClickVelocity = () => {
     //const distance = calculateDistanceBetweenPoints();
     const distance = secondAngle - firstAngle;
     clickVelocity = distance / clickDuration;
-    gsap.to('#circle-svg-container', { rotation: draggableCircle.rotation + 360, duration: 1 }) // TODO: Fix a problem here where the wheel flickers
+    // TODO: 'Backwards' spins
+    gsap.fromTo('#circle-svg-container', { rotation: draggableCircle.endRotation }, { rotation: draggableCircle.endRotation + 360, duration: 1 });
     clickDuration = secondX = firstX = secondY = firstY = firstAngle = secondAngle = 0;
 }
 
@@ -133,6 +134,7 @@ const resetChart = () => {
 // TODO: Fix issue where input is unclickable
 // TODO: Add ability to remove items
 // TODO: In local storage, maybe add a param to track how many times a place has come up, and store if its 'active' or not
+// TODO: 'Sub' previous items back into teh list?
 const addItemToList = (value) => {
     const placeList = document.getElementById('place-list');
     const placeListItem = document.createElement('li');
@@ -142,8 +144,8 @@ const addItemToList = (value) => {
 
 // TODO: Save places to local storage and load them when the page comes up
 // TODO: Add place list and the ability to delete places
-// TODO: Add limit to number of items... 8?
 const handleAddClicked = () => {
+    if (places.length === 8) return;
     const place = document.getElementById('place-input').value;
     places.push(place);
     addItemToList(place);
