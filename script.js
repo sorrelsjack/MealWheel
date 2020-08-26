@@ -100,6 +100,7 @@ const drawChart = () => {
 }
 
 const initialize = () => {
+    gsap.registerPlugin(Draggable);
     drawChart();
 }
 
