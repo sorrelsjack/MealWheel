@@ -1,21 +1,38 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Meal Wheel</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.0/Draggable.min.js"></script>
 </head>
+
 <body onload="initialize()">
     <h1>Meal Wheel</h1>
-    <div class="circle-container">
-        <div class="indicator"></div>
-        <canvas class="circle" id="circle-canvas"></div>
-    </div>
-    <div class="input-container">
-        <input placeholder="Place" id="place-input"></input>
-        <button onclick="handleAddClicked()">Add</button>
+    <div class="results-container" id="results"></div>
+    <div class="wrapper">
+        <div class="side-container column">
+            <h2>Place List</h2>
+            <ul id="place-list">
+            </ul>
+        </div>
+        <div class="main-container column">
+            <div class="circle-container" id="circle-container">
+                <div class="indicator" id="indicator"></div>
+                <div id="circle-svg-container">
+                    <svg viewBox="-1 -1 2 2" width="600" height="600" style="transform: rotate(-0.25turn)" id="circle-svg"></svg>
+                </div>
+            </div>
+            <div class="input-container">
+                <input placeholder="Place" id="place-input"></input>
+                <button onclick="handleAddClicked()">Add</button>
+            </div>
+        </div>
+        <div class="side-container column"><h2>History</h2></div>
+        </div>
     </div>
 </body>
+
 </html>
