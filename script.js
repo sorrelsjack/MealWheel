@@ -10,7 +10,7 @@ let firstAngle = secondAngle = 0;
 let clickDuration = 0;
 let clickDurationIntervalId = null;
 
-// TODO: Draw a whole circle if there's no slices defined
+// TODO: Hide indicator if there's no slices defined
 // Credit: https://bufferwall.com/posts/330881001ji1a/
 const drawChart = () => {
     resetDragValues();
@@ -90,7 +90,7 @@ const drawChart = () => {
         svg.appendChild(group);
     }
 
-    draggableCircle = Draggable.create('#circle-svg-container', { type: 'rotation', dragResistance: 0 })[0];
+    draggableCircle = Draggable.create('#circle-svg', { type: 'rotation', dragResistance: 0 })[0];
 
     draggableCircle.addEventListener('press', () => {
         clickDurationIntervalId = window.setInterval(trackClickDuration, 1);
@@ -128,7 +128,7 @@ const measureClickVelocity = () => {
     // TODO: Get decel
     // TODO: 'Backwards' spins
     gsap.fromTo(
-        '#circle-svg-container',
+        '#circle-svg',
         {
             rotation: draggableCircle.endRotation
         },
@@ -143,12 +143,10 @@ const measureClickVelocity = () => {
 
 const resetChart = () => {
     clearInterval();
-    // TODO: Delete all text
     document.getElementById('circle-svg').innerHTML = '';
     drawChart();
 }
 
-// TODO: Fix issue where input is unclickable
 // TODO: Add ability to remove items
 // TODO: In local storage, maybe add a param to track how many times a place has come up, and store if its 'active' or not
 // TODO: 'Sub' previous items back into the list?
@@ -163,6 +161,7 @@ const addItemToList = (value) => {
 // TODO: Add place list and the ability to delete places
 // TODO: Validation to see if a place was already added
 const handleAddClicked = () => {
+    draggableCircle.kill();
     if (places.length === 8) return;
     const place = document.getElementById('place-input').value;
     places.push(place);
