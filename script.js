@@ -64,7 +64,7 @@ const drawChart = () => {
         arr.push(tmp);
     }
 
-    for (let i = 0; i < arr.length; i++){
+    for (let i = 0; i < arr.length; i++) {
         let item = arr[i];
         const group = document.createElementNS(svgNS, 'g');
         group.setAttribute('transform', `${item.transform}`);
@@ -77,7 +77,7 @@ const drawChart = () => {
         group.appendChild(path);
 
         const text = document.createElementNS(svgNS, 'text');
-        text.setAttribute('fill', 'white'); 
+        text.setAttribute('fill', 'white');
         text.setAttribute('font-size', 30);
         text.setAttribute('x', item.xValue);
         text.setAttribute('y', item.yValue);
@@ -100,16 +100,7 @@ const drawChart = () => {
     draggableCircle.addEventListener('dragend', () => {
         window.clearInterval(clickDurationIntervalId);
         secondAngle = draggableCircle.endRotation;
-
         measureClickVelocity();
-
-        places.forEach(p => {
-            if (Draggable.hitTest(`#${p}-path`, '#indicator') && clickDuration === 0) {
-                const results = document.getElementById('results');
-                results.innerText = `Looks like you're eating at ${p}!`
-                results.style.visibility = 'visible';
-            }
-        });
     });
 }
 
@@ -120,8 +111,19 @@ const initialize = () => {
 
 const resetDragValues = () => clickDuration = firstAngle = secondAngle = 0;
 
+const onWheelStop = () => {
+    resetDragValues();
+    places.forEach(p => {
+        if (Draggable.hitTest(`#${p}-path`, '#indicator', 30) && clickDuration === 0) {
+            results.innerText = `Looks like you're eating at ${p}!`
+            results.style.visibility = 'visible';
+        }
+    });
+}
+
 // https://stackoverflow.com/questions/52039421/java-2d-slow-down-rotation-like-a-wheel-of-fortune Hmmm
 const measureClickVelocity = () => {
+    const results = document.getElementById('results');
     const distance = secondAngle - firstAngle;
     clickVelocity = Math.abs(distance / clickDuration); // Number of revolutions per second
     //const acceleration = clickVelocity / clickDuration; // TODO: Continuously be calculating distance and duration and adjust accel
@@ -135,7 +137,9 @@ const measureClickVelocity = () => {
         {
             rotation: draggableCircle.endRotation + (360 * clickVelocity * 3),
             duration: 3,
-            onInterrupt: () => resetDragValues()
+            onDragStart: () => { results.style.visibility = 'hidden' },
+            onInterrupt: () => onWheelStop(),
+            onComplete: () => onWheelStop()
         });
 
     resetDragValues();
@@ -160,6 +164,7 @@ const addItemToList = (value) => {
 // TODO: Save places to local storage and load them when the page comes up
 // TODO: Add place list and the ability to delete places
 // TODO: Validation to see if a place was already added
+// TODO: Disable input if we have 8 places
 const handleAddClicked = () => {
     draggableCircle.kill();
     if (places.length === 8) return;
