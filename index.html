@@ -4,8 +4,10 @@
 <head>
     <title>Meal Wheel</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
+    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
     <script src="script.js"></script>
     <script src="place.js"></script>
+    <script src="storageKeys.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.0/Draggable.min.js"></script>
 </head>
@@ -15,9 +17,14 @@
     <div class="results-container" id="results"></div>
     <div class="wrapper">
         <div class="side-container column">
-            <h2>Place List</h2>
-            <ul id="place-list">
-            </ul>
+            <div>
+                <h2>Place List</h2>
+                <ul id="place-list"></ul>
+            </div>
+            <div>
+                <h2>Available Places</h2>
+                <ul id="available-place-list"></ul>
+            </div>
         </div>
         <div class="main-container column">
             <div class="circle-container" id="circle-container">
@@ -28,14 +35,17 @@
             </div>
             <div class="input-container">
                 <input placeholder="Place" id="place-input"></input>
-                <button onclick="handleAddClicked()">Add</button>
+                <button onclick="handleAddClicked()" id="add-place-button">Add</button>
             </div>
         </div>
         <div class="side-container column">
-            <h2>History</h2>
-            <ul id="history-list">
-            </ul>
-        </div>
+            <div>
+                <h2>History</h2>
+                <ul id="history-list"></ul>
+            </div>
+            <div>
+                <h2>Suggestions</h2>
+            </div>
         </div>
     </div>
 </body>
