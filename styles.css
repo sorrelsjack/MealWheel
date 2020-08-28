@@ -12,6 +12,11 @@ h1 {
 h2 {
     margin-bottom: 10px;
 }
+h3 {
+    position: absolute;
+    top: 0;
+    margin: 10px
+}
 .results-container {
     margin-bottom: -10px;
     text-align: center;

@@ -25,6 +25,7 @@ const initialize = () => {
 
 // TODO: Fix bug where no circle shows up if there's just one place
 // TODO: FIx issue where longer text stretched into adjacent slice...
+// TODO: 'Clear all' functionality
 // Credit: https://bufferwall.com/posts/330881001ji1a/
 const drawChart = () => {
     resetDragValues();
@@ -54,10 +55,9 @@ const drawChart = () => {
         var item = {};
 
         item.index = i;
-        item.value = places[i].name;
+        item.text = places[i].name;
         radians = (((percent / total) * 360) * Math.PI) / 180;
         offset2 = ((offset / total) * 360);
-        item.data = places[i].name;
 
         x = cx + Math.sin(radians) * radius;
         y = cy - Math.cos(radians) * radius;
@@ -65,27 +65,27 @@ const drawChart = () => {
 
         // Arc
         item.d = `M${cx} ${cy},L${cx} ${cy - radius},A${radius} ${radius},0 ${la} 1,${x} ${y}Z`;
-        item.transform = `rotate(${offset2}, ${cx}, ${cy})`;
+        item.groupTransform = `rotate(${offset2}, ${cx}, ${cy})`;
 
         // Text
         x = cx + Math.sin(radians / 2) * radius / 2;
         y = cy - Math.cos(radians / 2) * radius / 2;
 
-        item.xValue = x;
-        item.yValue = y;
-        item.transformValue = `rotate(${-offset2},${x},${y})`;
+        item.x = x;
+        item.y = y;
+        item.textTransform = `rotate(${-offset2},${x},${y})`;
 
         offset += percent;
         arr.push(item);
     }
 
     for (let i = 0; i < arr.length; i++) {
-        let item = arr[i];
+        const item = arr[i];
         const group = document.createElementNS(svgNS, 'g');
-        group.setAttribute('transform', `${item.transform}`);
+        group.setAttribute('transform', `${item.groupTransform}`);
 
         const path = document.createElementNS(svgNS, 'path');
-        path.setAttribute('id', `${item.value.replace(' ', '-')}-path`);
+        path.setAttribute('id', `${item.text.replace(' ', '-')}-path`);
         path.setAttribute('d', `${item.d}`);
         path.setAttribute('fill', `${colors[i]}`);
 
@@ -94,11 +94,11 @@ const drawChart = () => {
         const text = document.createElementNS(svgNS, 'text');
         text.setAttribute('fill', 'white');
         text.setAttribute('font-size', 30);
-        text.setAttribute('x', item.xValue);
-        text.setAttribute('y', item.yValue);
-        text.setAttribute('transform', item.transformValue);
+        text.setAttribute('x', item.x);
+        text.setAttribute('y', item.y);
+        text.setAttribute('transform', item.textTransform);
 
-        const textNode = document.createTextNode(item.value);
+        const textNode = document.createTextNode(item.text);
         text.appendChild(textNode);
 
         group.appendChild(text);
@@ -125,6 +125,7 @@ const setIndicatorVisibility = () => {
     else indicator.style.visibility = 'visible';
 }
 
+// TODO: Create checkbox area will all the profiles and let them select which to add it to. Also add a 'select all'
 const setInputStatus = () => {
     const input = document.getElementById('place-input');
     const button = document.getElementById('add-place-button');
@@ -230,10 +231,13 @@ const updateLocalStorage = () => localStorage.setItem(storageKeys.places, JSON.s
 const handleAddClicked = () => {
     draggableCircle?.kill();
 
-    if (places.length === MAX_SLICES) return;
+    if (places.length === MAX_SLICES) return resetChart();
+    const inputValue = document.getElementById('place-input').value;
 
-    const place = Place(document.getElementById('place-input').value, 0, true);
-    if (places.map(p => p.name).includes(place.name)) { alert('This place has already been entered.'); return; }
+    if (!inputValue) return resetChart();
+
+    const place = Place(inputValue, 0, true);
+    if (places.map(p => p.name).includes(place.name)) { alert('This place has already been entered.'); return resetChart(); }
 
     places.push(place);
     populateLists(place);
