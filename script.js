@@ -2,13 +2,21 @@ let draggableCircle = null;
 let svg = null;
 const svgNS = 'http://www.w3.org/2000/svg';
 
-let places = ['CFA', 'KFC'];
+const storageKey = 'listOfPlaces';
+
+let places = [];
 let colors = ['#5390d9', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51', '#ef476f', '#bc00dd', '#6a00f4']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
 
 let firstAngle = secondAngle = 0;
 
 let clickDuration = 0;
 let clickDurationIntervalId = null;
+
+const initialize = () => {
+    gsap.registerPlugin(Draggable);
+    loadFromLocalStorage();
+    drawChart();
+}
 
 // TODO: Hide indicator if there's no slices defined
 // Credit: https://bufferwall.com/posts/330881001ji1a/
@@ -39,10 +47,10 @@ const drawChart = () => {
         var tmp = {};
 
         tmp.index = i;
-        tmp.value = item;
+        tmp.value = item.name;
         radians = (((percent / total) * 360) * Math.PI) / 180;
         offset2 = ((offset / total) * 360);
-        tmp.data = item;
+        tmp.data = item.name;
 
         x = cx + Math.sin(radians) * radius;
         y = cy - Math.cos(radians) * radius;
@@ -104,11 +112,6 @@ const drawChart = () => {
     });
 }
 
-const initialize = () => {
-    gsap.registerPlugin(Draggable);
-    drawChart();
-}
-
 const resetDragValues = () => clickDuration = firstAngle = secondAngle = 0;
 
 const onWheelStop = () => {
@@ -154,11 +157,19 @@ const resetChart = () => {
 // TODO: Add ability to remove items
 // TODO: In local storage, maybe add a param to track how many times a place has come up, and store if its 'active' or not
 // TODO: 'Sub' previous items back into the list?
-const addItemToList = (value) => {
+const addItemToList = (item) => {
     const placeList = document.getElementById('place-list');
     const placeListItem = document.createElement('li');
-    placeListItem.appendChild(document.createTextNode(value));
+    placeListItem.appendChild(document.createTextNode(item.name));
     placeList.appendChild(placeListItem);
+}
+
+const loadFromLocalStorage = () => {
+    array = localStorage.getItem(storageKey);
+    if (!array) return;
+
+    JSON.parse(array).forEach(i => places.push(i));
+    places.forEach(v => addItemToList(v));
 }
 
 // TODO: Save places to local storage and load them when the page comes up
@@ -166,11 +177,12 @@ const addItemToList = (value) => {
 // TODO: Validation to see if a place was already added
 // TODO: Disable input if we have 8 places
 const handleAddClicked = () => {
-    draggableCircle.kill();
+    draggableCircle?.kill();
     if (places.length === 8) return;
-    const place = document.getElementById('place-input').value;
+    const place = Place(document.getElementById('place-input').value, 0);
     places.push(place);
     addItemToList(place);
+    localStorage.setItem(storageKey, JSON.stringify(places));
     resetChart();
 }
 
