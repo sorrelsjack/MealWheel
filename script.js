@@ -117,8 +117,8 @@ const resetDragValues = () => clickDuration = firstAngle = secondAngle = 0;
 const onWheelStop = () => {
     resetDragValues();
     places.forEach(p => {
-        if (Draggable.hitTest(`#${p}-path`, '#indicator', 30) && clickDuration === 0) {
-            results.innerText = `Looks like you're eating at ${p}!`
+        if (Draggable.hitTest(`#${p.name}-path`, '#indicator', 30) && clickDuration === 0) {
+            results.innerText = `Looks like you're eating at ${p.name}!`
             results.style.visibility = 'visible';
         }
     });
