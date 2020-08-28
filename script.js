@@ -12,13 +12,16 @@ let firstAngle = secondAngle = 0;
 let clickDuration = 0;
 let clickDurationIntervalId = null;
 
+// TODO: Favicon
 const initialize = () => {
     gsap.registerPlugin(Draggable);
     loadFromLocalStorage();
+    populateLists();
     drawChart();
 }
 
 // TODO: Hide indicator if there's no slices defined
+// TODO: FIx issue where longer text stretched into adjacent slice...
 // Credit: https://bufferwall.com/posts/330881001ji1a/
 const drawChart = () => {
     resetDragValues();
@@ -78,7 +81,7 @@ const drawChart = () => {
         group.setAttribute('transform', `${item.transform}`);
 
         const path = document.createElementNS(svgNS, 'path');
-        path.setAttribute('id', `${item.value}-path`);
+        path.setAttribute('id', `${item.value.replace(' ', '-')}-path`);
         path.setAttribute('d', `${item.d}`);
         path.setAttribute('fill', `${colors[i]}`);
 
@@ -112,12 +115,18 @@ const drawChart = () => {
     });
 }
 
+// TODO: Fill out this function
+const toggleIndicatorVisibility = () => {
+
+}
+
 const resetDragValues = () => clickDuration = firstAngle = secondAngle = 0;
 
+// TODO: Update history value in object and localsStorage. Also, redraw history list
 const onWheelStop = () => {
     resetDragValues();
     places.forEach(p => {
-        if (Draggable.hitTest(`#${p.name}-path`, '#indicator', 30) && clickDuration === 0) {
+        if (Draggable.hitTest(`#${p.name.replace(' ', '-')}-path`, '#indicator', 30) && clickDuration === 0) {
             results.innerText = `Looks like you're eating at ${p.name}!`
             results.style.visibility = 'visible';
         }
@@ -129,7 +138,6 @@ const measureClickVelocity = () => {
     const results = document.getElementById('results');
     const distance = secondAngle - firstAngle;
     clickVelocity = Math.abs(distance / clickDuration); // Number of revolutions per second
-    //const acceleration = clickVelocity / clickDuration; // TODO: Continuously be calculating distance and duration and adjust accel
     // TODO: Get decel
     // TODO: 'Backwards' spins
     gsap.fromTo(
@@ -154,34 +162,63 @@ const resetChart = () => {
     drawChart();
 }
 
+const populateLists = (place = null) => {
+    if (place) {
+        addItemToPlaceList(place);
+        addItemToHistoryList(place);
+    }
+    else {
+        places.forEach(p => { 
+            addItemToPlaceList(p)
+            addItemToHistoryList(p)
+        });
+    }
+}
+
+// TODO: Location-based lists / profiles
 // TODO: Add ability to remove items
 // TODO: In local storage, maybe add a param to track how many times a place has come up, and store if its 'active' or not
 // TODO: 'Sub' previous items back into the list?
-const addItemToList = (item) => {
+// TODO: Input still becomes unselectable sometimes when you do a spin and then try to enter / add something
+const addItemToPlaceList = (item) => {
     const placeList = document.getElementById('place-list');
     const placeListItem = document.createElement('li');
     placeListItem.appendChild(document.createTextNode(item.name));
     placeList.appendChild(placeListItem);
 }
 
+// TODO: Redraw history list each time a place is chosen
+const addItemToHistoryList = (item) => {
+    const historyList = document.getElementById('history-list');
+    const historyListItem = document.createElement('li');
+    historyListItem.appendChild(document.createTextNode(`${item.name} (${item.timesChosen} Times)`));
+    historyList.appendChild(historyListItem);
+}
+
 const loadFromLocalStorage = () => {
     array = localStorage.getItem(storageKey);
     if (!array) return;
 
-    JSON.parse(array).forEach(i => places.push(i));
-    places.forEach(v => addItemToList(v));
+    JSON.parse(array).forEach(p => places.push(p));
 }
 
-// TODO: Save places to local storage and load them when the page comes up
+// When no more force, use friction constant
+
 // TODO: Add place list and the ability to delete places
 // TODO: Validation to see if a place was already added
 // TODO: Disable input if we have 8 places
 const handleAddClicked = () => {
     draggableCircle?.kill();
+
     if (places.length === 8) return;
+
     const place = Place(document.getElementById('place-input').value, 0);
+    if (places.map(p => p.name).includes(place.name)) { alert('This place has already been entered.'); return; }
+
     places.push(place);
-    addItemToList(place);
+
+    populateLists(place);
+
     localStorage.setItem(storageKey, JSON.stringify(places));
     resetChart();
 }
