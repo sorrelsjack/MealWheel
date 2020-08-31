@@ -1,5 +1,5 @@
 const resetDragValues = () => { 
-    clickDuration = firstAngle = secondAngle = 0; 
+    clickDuration = clickVelocity = firstAngle = secondAngle = 0; 
     currentDeceleration = initialDeceleration;
     spinMultipliers = [];
 }

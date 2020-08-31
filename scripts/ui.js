@@ -92,9 +92,16 @@ const drawChart = () => {
     draggableCircle.addEventListener('press', () => {
         clickDurationIntervalId = window.setInterval(trackClickDuration, 1);
         firstAngle = draggableCircle.rotation;
+        
+        if (gsap.isTweening('#circle-svg')) {
+            resetDragValues();
+            window.clearInterval(clickDurationIntervalId);
+        }
     });
 
     draggableCircle.addEventListener('dragend', () => {
+        if (gsap.isTweening('#circle-svg')) return;
+        
         window.clearInterval(clickDurationIntervalId);
         secondAngle = draggableCircle.endRotation;
         measureClickVelocity();

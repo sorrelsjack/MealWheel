@@ -16,6 +16,7 @@ const initialDeceleration = .3;
 let currentDeceleration = initialDeceleration;
 
 let spinMultipliers = [];
+let spinAnimation = null;
 
 const initialize = () => {
     gsap.registerPlugin(Draggable);
@@ -40,7 +41,8 @@ const measureClickVelocity = () => {
     let lastMultiplier = 0;
 
     do {
-        lastMultiplier = clickVelocity - currentDeceleration
+        if (clickVelocity === Infinity) break;
+        lastMultiplier = clickVelocity - currentDeceleration;
         if (lastMultiplier < 0) break;
         spinMultipliers.push(lastMultiplier);
         currentDeceleration += .3;
@@ -55,12 +57,11 @@ const measureClickVelocity = () => {
         keyframes.push({ rotation: cumulativeRotation, duration: 1 })
     }
 
-    gsap.to(
+    spinAnimation = gsap.to(
         '#circle-svg',
         {
             keyframes,
             onDragStart: () => { results.style.visibility = 'hidden' },
-            onInterrupt: () => handleWheelStop(),
             onComplete: () => handleWheelStop()
         }
     )
