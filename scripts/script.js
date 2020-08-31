@@ -92,7 +92,7 @@ const getProfilesToAddTo = () => {
     return toAddTo;
 }
 
-const loadPlacesForProfile = () => places = activeProfile !== profileForAll ? placesFromStorage.filter(p => p.cities.includes(activeProfile)) : placesFromStorage;
+const loadPlacesForProfile = () => places = activeProfile !== profileForAll ? placesFromStorage.filter(p => p.cities.includes(activeProfile) || !p.cities.length) : placesFromStorage;
 
 const updateLocalStorage = (key, values) => localStorage.setItem(key, JSON.stringify(values));
 

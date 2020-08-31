@@ -1,7 +1,6 @@
 // TODO: Allow them to add to 'Available' list rather than 'Active' list
 // TODO: Add ability to delete places
 // TODO: Populate 'available places'
-// TODO: Look at what checkboxes are checked and then add to those lists
 const handleAddPlaceClicked = () => {
     draggableCircle?.kill();
 
@@ -50,15 +49,24 @@ const handleProfileSelected = (e) => {
     loadPlacesForProfile();
     setProfileElementStatuses();
     populateLists();
-    drawChart();
+    resetChart();
 }
 
 const handleProfileCheckboxToggled = (e) => {
     const checkboxes = document.querySelectorAll("[id^='profile-checkbox'");
+
     checkboxes.forEach(c => {
         if (e.target.id === 'profile-checkbox-all') { c.checked = e.target.checked; return; };
         if (c.id !== e.target.id) c.checked = false;
     });
+}
+
+const handleAddPlaceRadioButtonToggled = (e) => {
+    const active = document.getElementById('add-active-place-option');
+    const available = document.getElementById('add-available-place-option');
+
+    if (e.target === active) available.checked = false;
+    else if (e.target === available ) active.checked = false;
 }
 
 const handleClearAllClicked = () => {

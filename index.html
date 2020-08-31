@@ -52,9 +52,9 @@
                 <input placeholder="Place" id="place-input"></input>
                 <button onclick="handleAddPlaceClicked()" id="add-place-button">Add</button>
                 <div class="add-place-options" id="add-place-radio-buttons">
-                    <input type="radio" id="add-active-place-option">
+                    <input type="radio" onchange="handleAddPlaceRadioButtonToggled(event)" id="add-active-place-option">
                     <label for="add-active-place-option">Active</label>
-                    <input type="radio" id="add-available-place-option">
+                    <input type="radio" onchange="handleAddPlaceRadioButtonToggled(event)" id="add-available-place-option">
                     <label for="add-available-place-option">Available</label>
                 </div>
                 <div class="add-place-options" id="add-to-profile-checkboxes">

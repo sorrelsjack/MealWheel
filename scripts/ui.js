@@ -4,7 +4,7 @@ const svgNS = 'http://www.w3.org/2000/svg';
 
 let colors = ['#5390d9', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51', '#ef476f', '#bc00dd', '#6a00f4']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
 
-// TODO: Fix bug where no circle shows up if there's just one place
+// TODO: Fix bug where no circle shows up if there's just one place / add message that there needs to be two places
 // TODO: FIx issue where longer text stretched into adjacent slice...
 // Credit: https://bufferwall.com/posts/330881001ji1a/
 const drawChart = () => {
