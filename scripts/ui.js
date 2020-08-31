@@ -94,6 +94,7 @@ const drawChart = () => {
         firstAngle = draggableCircle.rotation;
         
         if (gsap.isTweening('#circle-svg')) {
+            spinAnimation?.kill();
             resetDragValues();
             window.clearInterval(clickDurationIntervalId);
         }
