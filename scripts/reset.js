@@ -1,4 +1,8 @@
-const resetDragValues = () => clickDuration = firstAngle = secondAngle = 0;
+const resetDragValues = () => { 
+    clickDuration = firstAngle = secondAngle = 0; 
+    currentDeceleration = initialDeceleration;
+    spinMultipliers = [];
+}
 
 const resetChart = () => {
     clearInterval();
@@ -16,5 +20,5 @@ const clearLists = () => {
 const clearDropdown = () => {
     const dropdown = document.getElementById('profile-dropdown');
     dropdown.innerHTML = '';
-    populateProfileDropdown('All');
+    populateProfileElements('All');
 }

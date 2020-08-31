@@ -105,7 +105,6 @@ const setIndicatorVisibility = () => {
     else indicator.style.visibility = 'visible';
 }
 
-// TODO: Create checkbox area will all the profiles and let them select which to add it to. Also add a 'select all'
 const setInputStatus = () => {
     const input = document.getElementById('place-input');
     const button = document.getElementById('add-place-button');
@@ -117,11 +116,24 @@ const setInputStatus = () => {
     else input.disabled = button.disabled = false;
 }
 
+const setProfileElementStatuses = () => {
+    setProfileDropdownStatus();
+    setProfileCheckboxesStatus();
+}
+
 const setProfileDropdownStatus = () => {
     const dropdown = document.getElementById('profile-dropdown');
 
     if (!profiles.length) dropdown.disabled = true;
     else dropdown.disabled = false;
+}
+
+const setProfileCheckboxesStatus = () => {
+    const checkbox = document.getElementById('profile-checkbox-all');
+
+    if (!profiles.length) checkbox.disabled = true;
+    else if (profiles.length && activeProfile !== 'All') checkbox.checked = false;
+    else checkbox.disabled = false;
 }
 
 // TODO: Factor in active vs inactive
@@ -138,21 +150,58 @@ const populateLists = (place = null) => {
     }
 }
 
+const populateProfileElements = (profile = null) => {
+    populateProfileDropdown(profile);
+    populateProfileCheckboxes(profile);
+}
+
 const populateProfileDropdown = (profile = null) => {
     const dropdown = document.getElementById('profile-dropdown');
 
     const createOption = (value) => {
         const option = document.createElement('option');
         option.value = value;
+        option.id = `profile-dropdown-option-${value.toLowerCase()}`;
         option.appendChild(document.createTextNode(value));
         dropdown.appendChild(option);
     }
 
     if (profile) createOption(profile);
-    else profiles.forEach(createOption)
+    else profiles.forEach(createOption);
+
+    if (activeProfile) document.getElementById(`profile-dropdown-option-${activeProfile.toLowerCase()}`).selected = "selected";
 }
 
-// TODO: Location-based lists / profiles
+const populateProfileCheckboxes = (profile = null) => {
+    const checkboxContainer = document.getElementById('add-to-profile-checkboxes');
+
+    const createCheckbox = (value) => {
+        const checkbox = document.createElement('input');
+
+        checkbox.type = 'checkbox';
+        checkbox.id = `profile-checkbox-${value.toLowerCase()}`;
+        checkbox.name = value.toLowerCase();
+
+        checkbox.checked = activeProfile === value ? true : false;
+        checkbox.checked = activeProfile === 'All' ? true : checkbox.checked;
+
+        checkbox.addEventListener('change', (event) => {
+            handleProfileCheckboxToggled(event);
+        });
+
+        const label = document.createElement('label');
+        
+        label.for = checkbox.id;
+        label.appendChild(document.createTextNode(value));
+
+        checkboxContainer.appendChild(checkbox);
+        checkboxContainer.appendChild(label);
+    }
+
+    if (profile) createCheckbox(profile);
+    else profiles.forEach(createCheckbox);
+}
+
 // TODO: Add ability to remove items
 // TODO: In local storage, maybe add a param to track how many times a place has come up, and store if its 'active' or not
 // TODO: 'Sub' previous items back into the list?

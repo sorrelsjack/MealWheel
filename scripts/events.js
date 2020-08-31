@@ -2,6 +2,8 @@
 // TODO: When no more force, use friction constant
 // TODO: Add ability to delete places
 // TODO: Populate 'available places'
+// TODO: Look at what checkboxes are checked and then add to those lists
+// TODO: Add 'active' vs add 'available'
 const handleAddPlaceClicked = () => {
     draggableCircle?.kill();
 
@@ -9,6 +11,8 @@ const handleAddPlaceClicked = () => {
     const inputValue = document.getElementById('place-input').value;
 
     if (!inputValue) return resetChart();
+
+    // TODO: Get all checkboxes and then find out where they correspond to. Then, add those places as the fourth argument v
 
     const place = Place(inputValue, 0, true);
     if (places.map(p => p.name).includes(place.name)) { alert('This place has already been entered.'); return resetChart(); }
@@ -27,9 +31,32 @@ const handleAddProfileClicked = () => {
 
     profiles.push(inputValue);
 
-    populateProfileDropdown(inputValue);
+    populateProfileElements(inputValue);
     updateProfilesLocalStorage();
-    setProfileDropdownStatus();
+    setProfileElementStatuses();
+}
+
+// TODO: Load previously selected profile each page refresh
+const handleProfileSelected = (e) => {
+    activeProfile = e.target.value;
+
+    const checkbox = document.getElementById(`profile-checkbox-${activeProfile.toLowerCase()}`);
+    checkbox.checked = true;
+
+    const checkboxes = document.querySelectorAll("[id^='profile-checkbox'");
+    checkboxes.forEach(c => {
+        if (c.id !== checkbox.id) c.checked = false;
+    });
+
+    localStorage.setItem(storageKeys.activeProfile, activeProfile);
+}
+
+const handleProfileCheckboxToggled = (e) => {
+    const checkboxes = document.querySelectorAll("[id^='profile-checkbox'");
+    checkboxes.forEach(c => {
+        if (e.target.id === 'profile-checkbox-all') { c.checked = true; return; };
+        if (c.id !== e.target.id) c.checked = false;
+    });
 }
 
 const handleClearAllClicked = () => {
