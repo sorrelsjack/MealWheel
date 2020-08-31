@@ -3,8 +3,9 @@
 
 <head>
     <title>Meal Wheel</title>
+    <link rel="icon" type="image/png" href="assets/favicon.ico">
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <script src="script.js"></script>
     <script src="place.js"></script>
     <script src="storageKeys.js"></script>
@@ -13,7 +14,17 @@
 </head>
 
 <body onload="initialize()">
-    <h3>Current Profile</h3>
+    <div class="profile-dropdown-container">
+        <h3>Current Profile</h3>
+        <select name="profile-dropdown" id="profile-dropdown">
+            <option value="all">All</option>
+        </select>
+        <input placeholder="Profile" id="profile-input"></input>
+        <button onclick="handleAddProfileClicked()" id="add-profile-button">Add</button>
+    </div>
+    <div class="clear-all-container">
+        <button onclick="handleClearAllClicked()">Clear All Data</button>
+    </div>
     <h1>Meal Wheel</h1>
     <div class="results-container" id="results"></div>
     <div class="wrapper">
@@ -36,7 +47,7 @@
             </div>
             <div class="input-container">
                 <input placeholder="Place" id="place-input"></input>
-                <button onclick="handleAddClicked()" id="add-place-button">Add</button>
+                <button onclick="handleAddPlaceClicked()" id="add-place-button">Add</button>
             </div>
         </div>
         <div class="side-container column">

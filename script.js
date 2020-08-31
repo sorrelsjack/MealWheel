@@ -15,17 +15,17 @@ let clickDurationIntervalId = null;
 const initialDeceleration = .3;
 let currentDeceleration = initialDeceleration;
 
-// TODO: Favicon
 const initialize = () => {
     gsap.registerPlugin(Draggable);
     loadFromLocalStorage();
+    setProfileDropdownStatus();
     populateLists();
+    populateProfileDropdown();
     drawChart();
 }
 
 // TODO: Fix bug where no circle shows up if there's just one place
 // TODO: FIx issue where longer text stretched into adjacent slice...
-// TODO: 'Clear all' functionality
 // Credit: https://bufferwall.com/posts/330881001ji1a/
 const drawChart = () => {
     resetDragValues();
@@ -137,6 +137,13 @@ const setInputStatus = () => {
     else input.disabled = button.disabled = false;
 }
 
+const setProfileDropdownStatus = () => {
+    const dropdown = document.getElementById('profile-dropdown');
+
+    if (!profiles.length) dropdown.disabled = true;
+    else dropdown.disabled = false;
+}
+
 const resetDragValues = () => clickDuration = firstAngle = secondAngle = 0;
 
 const onWheelStop = () => {
@@ -149,7 +156,7 @@ const onWheelStop = () => {
             place.timesChosen += 1;
             document.getElementById('history-list').innerHTML = '';
             places.forEach(pl => addItemToHistoryList(pl));
-            updateLocalStorage();
+            updatePlacesLocalStorage();
         }
     });
 }
@@ -198,6 +205,33 @@ const populateLists = (place = null) => {
     }
 }
 
+const populateProfileDropdown = (profile = null) => {
+    const dropdown = document.getElementById('profile-dropdown');
+
+    const createOption = (value) => {
+        const option = document.createElement('option');
+        option.value = value;
+        option.appendChild(document.createTextNode(value));
+        dropdown.appendChild(option);
+    }
+
+    if (profile) createOption(profile);
+    else profiles.forEach(createOption)
+}
+
+const clearLists = () => {
+    const placeList = document.getElementById('place-list');
+    const historyList = document.getElementById('history-list');
+    placeList.innerHTML = '';
+    historyList.innerHTML = '';
+}
+
+const clearDropdown = () => {
+    const dropdown = document.getElementById('profile-dropdown');
+    dropdown.innerHTML = '';
+    populateProfileDropdown('All');
+}
+
 // TODO: Location-based lists / profiles
 // TODO: Add ability to remove items
 // TODO: In local storage, maybe add a param to track how many times a place has come up, and store if its 'active' or not
@@ -217,18 +251,24 @@ const addItemToHistoryList = (item) => {
 }
 
 const loadFromLocalStorage = () => {
-    array = localStorage.getItem(storageKeys.places);
-    if (!array) return;
+    plcs = localStorage.getItem(storageKeys.places);
+    prfls = localStorage.getItem(storageKeys.profiles);
 
-    JSON.parse(array).forEach(p => places.push(p));
+    if (plcs) JSON.parse(plcs).forEach(p => places.push(p));
+    if (prfls) JSON.parse(prfls).forEach(p => profiles.push(p));
 }
 
-const updateLocalStorage = () => localStorage.setItem(storageKeys.places, JSON.stringify(places));
+const updateLocalStorage = (key, values) => localStorage.setItem(key, JSON.stringify(values));
 
+const updatePlacesLocalStorage = () => updateLocalStorage(storageKeys.places, places);
+
+const updateProfilesLocalStorage = () => updateLocalStorage(storageKeys.profiles, profiles);
+
+// TODO: Allow them to add to 'Available' list rather than 'Active' list
 // TODO: When no more force, use friction constant
 // TODO: Add ability to delete places
 // TODO: Populate 'available places'
-const handleAddClicked = () => {
+const handleAddPlaceClicked = () => {
     draggableCircle?.kill();
 
     if (places.length === MAX_SLICES) return resetChart();
@@ -241,8 +281,32 @@ const handleAddClicked = () => {
 
     places.push(place);
     populateLists(place);
-    updateLocalStorage();
+    updatePlacesLocalStorage();
     resetChart();
+}
+
+const handleAddProfileClicked = () => {
+    const inputValue = document.getElementById('profile-input').value;
+
+    if (!inputValue) return; 
+    if (profiles.includes(inputValue)) alert('This profile has already been entered.');
+
+    profiles.push(inputValue);
+
+    populateProfileDropdown(inputValue);
+    updateProfilesLocalStorage();
+    setProfileDropdownStatus();
+}
+
+const handleClearAllClicked = () => {
+    const r = confirm("Are you sure you want to clear your data? This will delete all profiles, places, and history. You can't get this back.");
+    if (r) {
+        localStorage.clear();
+        places = profiles = []
+        clearLists();
+        clearDropdown();
+        resetChart();
+    }
 }
 
 const trackClickDuration = () => clickDuration += 1;
