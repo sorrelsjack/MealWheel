@@ -11,6 +11,7 @@ const drawChart = () => {
     resetDragValues();
     setIndicatorVisibility();
     setInputStatus();
+    setRadioButtonStatuses();
     setPlaceRadioButtonsStatus();
 
     svg = document.getElementById('circle-svg');
@@ -106,11 +107,30 @@ const setIndicatorVisibility = () => {
     else indicator.style.visibility = 'visible';
 }
 
+const setRadioButtonStatuses = () => {
+    const active = document.getElementById('add-active-place-option');
+    const available = document.getElementById('add-available-place-option');
+
+    if (places === MAX_SLICES) {
+        active.checked = false;
+        active.disabled = true;
+        available.checked = true;
+    }
+    else {
+        if (!active.checked) if (!available.checked) active.checked = true;
+    }
+}
+
 const setInputStatus = () => {
     const input = document.getElementById('place-input');
     const button = document.getElementById('add-place-button');
 
-    if (places.length === MAX_SLICES) {
+    const active = document.getElementById('add-active-place-option');
+    const available = document.getElementById('add-available-place-option');
+
+    const ableToInput = (active.checked || available.checked) && places.length < MAX_SLICES;
+
+    if (!ableToInput) {
         input.value = '';
         input.disabled = button.disabled = true;
     }
@@ -132,7 +152,7 @@ const setProfileDropdownStatus = () => {
 const setProfileCheckboxesStatus = () => {
     const checkbox = document.getElementById('profile-checkbox-all');
 
-    if (!profiles.length) checkbox.disabled = true;
+    if (!profiles.length) checkbox.disabled = checkbox.checked = true;
     else if (profiles.length && activeProfile !== profileForAll) checkbox.checked = false;
     else checkbox.disabled = false;
 }
@@ -207,6 +227,7 @@ const populateProfileCheckboxes = (profile = null) => {
         const label = document.createElement('label');
 
         label.for = checkbox.id;
+        label.id = `${checkbox.id}-label`;
         label.appendChild(document.createTextNode(value));
 
         checkboxContainer.appendChild(checkbox);

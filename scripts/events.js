@@ -1,7 +1,6 @@
 // TODO: Allow them to add to 'Available' list rather than 'Active' list
 // TODO: Add ability to delete places
 // TODO: Populate 'available places'
-// TODO: At least one radio button must be selected
 const handleAddPlaceClicked = () => {
     draggableCircle?.kill();
 
@@ -68,15 +67,18 @@ const handleAddPlaceRadioButtonToggled = (e) => {
 
     if (e.target === active) available.checked = false;
     else if (e.target === available ) active.checked = false;
+
+    setInputStatus();
 }
 
 const handleClearAllClicked = () => {
     const r = confirm("Are you sure you want to clear your data? This will delete all profiles, places, and history. You can't get this back.");
     if (r) {
         localStorage.clear();
-        places = profiles = []
+        places = profiles = placesFromStorage = [];
         clearLists();
         clearDropdown();
+        resetCheckBoxes();
         resetChart();
     }
 }

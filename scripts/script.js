@@ -23,6 +23,7 @@ const initialize = () => {
     loadPlacesForProfile();
     populateProfileElements();
     setProfileElementStatuses();
+    setRadioButtonStatuses();
     populateLists();
     drawChart();
 }
