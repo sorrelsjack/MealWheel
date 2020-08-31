@@ -1,6 +1,7 @@
 // TODO: Allow them to add to 'Available' list rather than 'Active' list
 // TODO: Add ability to delete places
 // TODO: Populate 'available places'
+// TODO: At least one radio button must be selected
 const handleAddPlaceClicked = () => {
     draggableCircle?.kill();
 
@@ -84,7 +85,7 @@ const handleWheelStop = () => {
     resetDragValues();
     places.forEach(p => {
         if (Draggable.hitTest(`#${p.name.replace(' ', '-')}-path`, '#indicator', 30) && clickDuration === 0) {
-            results.innerText = `Looks like you're eating at ${p.name}!` // TODO: Add cool animation
+            results.innerText = `Looks like you're eating at ${p.name}!`
             results.style.visibility = 'visible';
             const place = places.find(pl => p.name === pl.name);
             place.timesChosen += 1;
@@ -93,4 +94,5 @@ const handleWheelStop = () => {
             updatePlacesLocalStorage();
         }
     });
+    confetti.start(1500);
 }
