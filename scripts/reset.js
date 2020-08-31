@@ -20,5 +20,6 @@ const clearLists = () => {
 const clearDropdown = () => {
     const dropdown = document.getElementById('profile-dropdown');
     dropdown.innerHTML = '';
-    populateProfileElements('All');
+    setProfileDropdownStatus();
+    populateProfileElements(profileForAll);
 }

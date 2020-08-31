@@ -11,6 +11,7 @@ const drawChart = () => {
     resetDragValues();
     setIndicatorVisibility();
     setInputStatus();
+    setPlaceRadioButtonsStatus();
 
     svg = document.getElementById('circle-svg');
 
@@ -132,8 +133,18 @@ const setProfileCheckboxesStatus = () => {
     const checkbox = document.getElementById('profile-checkbox-all');
 
     if (!profiles.length) checkbox.disabled = true;
-    else if (profiles.length && activeProfile !== 'All') checkbox.checked = false;
+    else if (profiles.length && activeProfile !== profileForAll) checkbox.checked = false;
     else checkbox.disabled = false;
+}
+
+const setPlaceRadioButtonsStatus = () => {
+    const active = document.getElementById('add-active-place-option');
+
+    if (places === MAX_SLICES) {
+        active.disabled = true;
+        active.checked = false;
+    }
+    else if (places < MAX_SLICES) active.disabled = false;
 }
 
 // TODO: Factor in active vs inactive
@@ -143,6 +154,7 @@ const populateLists = (place = null) => {
         addItemToHistoryList(place);
     }
     else {
+        clearLists();
         places.forEach(p => {
             addItemToPlaceList(p)
             addItemToHistoryList(p)
@@ -161,7 +173,9 @@ const populateProfileDropdown = (profile = null) => {
     const createOption = (value) => {
         const option = document.createElement('option');
         option.value = value;
+
         option.id = `profile-dropdown-option-${value.toLowerCase()}`;
+
         option.appendChild(document.createTextNode(value));
         dropdown.appendChild(option);
     }
@@ -172,6 +186,7 @@ const populateProfileDropdown = (profile = null) => {
     if (activeProfile) document.getElementById(`profile-dropdown-option-${activeProfile.toLowerCase()}`).selected = "selected";
 }
 
+// TODO: Deal with 'all' checkbox if a new thing is added. Should be checked or unchecked
 const populateProfileCheckboxes = (profile = null) => {
     const checkboxContainer = document.getElementById('add-to-profile-checkboxes');
 
@@ -180,17 +195,17 @@ const populateProfileCheckboxes = (profile = null) => {
 
         checkbox.type = 'checkbox';
         checkbox.id = `profile-checkbox-${value.toLowerCase()}`;
-        checkbox.name = value.toLowerCase();
+        checkbox.name = value;
 
         checkbox.checked = activeProfile === value ? true : false;
-        checkbox.checked = activeProfile === 'All' ? true : checkbox.checked;
+        checkbox.checked = activeProfile === profileForAll ? true : checkbox.checked;
 
         checkbox.addEventListener('change', (event) => {
             handleProfileCheckboxToggled(event);
         });
 
         const label = document.createElement('label');
-        
+
         label.for = checkbox.id;
         label.appendChild(document.createTextNode(value));
 
@@ -203,7 +218,7 @@ const populateProfileCheckboxes = (profile = null) => {
 }
 
 // TODO: Add ability to remove items
-// TODO: In local storage, maybe add a param to track how many times a place has come up, and store if its 'active' or not
+// TODO: In local storage, store if its 'active' or not
 // TODO: 'Sub' previous items back into the list?
 const addItemToPlaceList = (item) => {
     const placeList = document.getElementById('place-list');

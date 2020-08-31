@@ -74,9 +74,13 @@ ul {
 li {
     margin-bottom: 10px;
 }
+label {
+    margin-left: 5px;
+    margin-right: 5px;
+}
 .side-container div {
     height: 50%;
 }
-.add-to-profile-checkboxes {
+.add-place-options {
     margin-top: 10px;
 }

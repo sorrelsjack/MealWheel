@@ -1,9 +1,11 @@
 const MAX_SLICES = 8;
 
+let placesFromStorage = [];
 let places = [];
 let profiles = [];
 
-let activeProfile = 'All';
+const profileForAll = 'All';
+let activeProfile = profileForAll;
 
 let firstAngle = secondAngle = 0;
 
@@ -18,13 +20,13 @@ let spinMultipliers = [];
 const initialize = () => {
     gsap.registerPlugin(Draggable);
     loadFromLocalStorage();
+    loadPlacesForProfile();
     populateProfileElements();
     setProfileElementStatuses();
     populateLists();
     drawChart();
 }
 
-// TODO: Suggestions section
 // TODO: If 'all' is checked when the user has no profiles, record 'all' as its profile in localStorage
 // TODO: Remove a profile
 
@@ -56,7 +58,6 @@ const measureClickVelocity = () => {
     gsap.to(
         '#circle-svg',
         {
-            duration: keyframes.length + 1,
             keyframes,
             onDragStart: () => { results.style.visibility = 'hidden' },
             onInterrupt: () => handleWheelStop(),
@@ -72,15 +73,33 @@ const loadFromLocalStorage = () => {
     prfls = localStorage.getItem(storageKeys.profiles);
     actvPrfl = localStorage.getItem(storageKeys.activeProfile);
 
-    if (plcs) JSON.parse(plcs).forEach(p => places.push(p));
+    if (plcs) JSON.parse(plcs).forEach(p => placesFromStorage.push(p));
     if (prfls) JSON.parse(prfls).forEach(p => profiles.push(p));
-    activeProfile = actvPrfl ? actvPrfl : 'All';
+    activeProfile = actvPrfl ? JSON.parse(actvPrfl) : profileForAll;
 }
+
+const getProfilesToAddTo = () => {
+    const checkboxes = document.querySelectorAll("[id^='profile-checkbox'");
+    let toAddTo = [];
+
+    checkboxes.forEach(c => {
+        if (c.id === 'profile-checkbox-all') return profiles;
+        else {
+            if (c.checked) toAddTo.push(c.name);
+        }
+    });
+
+    return toAddTo;
+}
+
+const loadPlacesForProfile = () => places = activeProfile !== profileForAll ? placesFromStorage.filter(p => p.cities.includes(activeProfile)) : placesFromStorage;
 
 const updateLocalStorage = (key, values) => localStorage.setItem(key, JSON.stringify(values));
 
 const updatePlacesLocalStorage = () => updateLocalStorage(storageKeys.places, places);
 
 const updateProfilesLocalStorage = () => updateLocalStorage(storageKeys.profiles, profiles);
+
+const updateActiveProfileLocalStorage = () => updateLocalStorage(storageKeys.activeProfile, activeProfile);
 
 const trackClickDuration = () => clickDuration += 1;

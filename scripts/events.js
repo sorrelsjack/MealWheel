@@ -1,9 +1,7 @@
 // TODO: Allow them to add to 'Available' list rather than 'Active' list
-// TODO: When no more force, use friction constant
 // TODO: Add ability to delete places
 // TODO: Populate 'available places'
 // TODO: Look at what checkboxes are checked and then add to those lists
-// TODO: Add 'active' vs add 'available'
 const handleAddPlaceClicked = () => {
     draggableCircle?.kill();
 
@@ -12,9 +10,7 @@ const handleAddPlaceClicked = () => {
 
     if (!inputValue) return resetChart();
 
-    // TODO: Get all checkboxes and then find out where they correspond to. Then, add those places as the fourth argument v
-
-    const place = Place(inputValue, 0, true);
+    const place = Place(inputValue, 0, true, getProfilesToAddTo());
     if (places.map(p => p.name).includes(place.name)) { alert('This place has already been entered.'); return resetChart(); }
 
     places.push(place);
@@ -31,12 +27,13 @@ const handleAddProfileClicked = () => {
 
     profiles.push(inputValue);
 
+    activeProfile = inputValue;
+    updateActiveProfileLocalStorage();
     populateProfileElements(inputValue);
     updateProfilesLocalStorage();
     setProfileElementStatuses();
 }
 
-// TODO: Load previously selected profile each page refresh
 const handleProfileSelected = (e) => {
     activeProfile = e.target.value;
 
@@ -45,16 +42,21 @@ const handleProfileSelected = (e) => {
 
     const checkboxes = document.querySelectorAll("[id^='profile-checkbox'");
     checkboxes.forEach(c => {
-        if (c.id !== checkbox.id) c.checked = false;
+        if (activeProfile === profileForAll) c.checked = true;
+        else if (c.id !== checkbox.id) c.checked = false;
     });
 
-    localStorage.setItem(storageKeys.activeProfile, activeProfile);
+    updateActiveProfileLocalStorage();
+    loadPlacesForProfile();
+    setProfileElementStatuses();
+    populateLists();
+    drawChart();
 }
 
 const handleProfileCheckboxToggled = (e) => {
     const checkboxes = document.querySelectorAll("[id^='profile-checkbox'");
     checkboxes.forEach(c => {
-        if (e.target.id === 'profile-checkbox-all') { c.checked = true; return; };
+        if (e.target.id === 'profile-checkbox-all') { c.checked = e.target.checked; return; };
         if (c.id !== e.target.id) c.checked = false;
     });
 }
