@@ -46,12 +46,11 @@ const measureClickVelocity = () => {
         currentDeceleration += .3;
     } while (lastMultiplier > 0)
 
-    // TODO: 'Backwards' spins
     let cumulativeRotation = draggableCircle.rotation;
     let keyframes = [];
 
     for (let i = 0; i < spinMultipliers.length; i++) {
-        const rotation = 360 * spinMultipliers[i];
+        const rotation = (distance > 0 ? 360 : -360) * spinMultipliers[i];
         cumulativeRotation += rotation;
         keyframes.push({ rotation: cumulativeRotation, duration: 1 })
     }
