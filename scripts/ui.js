@@ -2,27 +2,7 @@ let draggableCircle = null;
 let svg = null;
 const svgNS = 'http://www.w3.org/2000/svg';
 
-const MAX_SLICES = 8;
-let places = [];
-let profiles = [];
 let colors = ['#5390d9', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51', '#ef476f', '#bc00dd', '#6a00f4']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
-
-let firstAngle = secondAngle = 0;
-
-let clickDuration = 0;
-let clickDurationIntervalId = null;
-
-const initialDeceleration = .3;
-let currentDeceleration = initialDeceleration;
-
-const initialize = () => {
-    gsap.registerPlugin(Draggable);
-    loadFromLocalStorage();
-    setProfileDropdownStatus();
-    populateLists();
-    populateProfileDropdown();
-    drawChart();
-}
 
 // TODO: Fix bug where no circle shows up if there's just one place
 // TODO: FIx issue where longer text stretched into adjacent slice...
@@ -144,53 +124,6 @@ const setProfileDropdownStatus = () => {
     else dropdown.disabled = false;
 }
 
-const resetDragValues = () => clickDuration = firstAngle = secondAngle = 0;
-
-const onWheelStop = () => {
-    resetDragValues();
-    places.forEach(p => {
-        if (Draggable.hitTest(`#${p.name.replace(' ', '-')}-path`, '#indicator', 30) && clickDuration === 0) {
-            results.innerText = `Looks like you're eating at ${p.name}!` // TODO: Add cool animation
-            results.style.visibility = 'visible';
-            const place = places.find(pl => p.name === pl.name);
-            place.timesChosen += 1;
-            document.getElementById('history-list').innerHTML = '';
-            places.forEach(pl => addItemToHistoryList(pl));
-            updatePlacesLocalStorage();
-        }
-    });
-}
-
-// https://stackoverflow.com/questions/52039421/java-2d-slow-down-rotation-like-a-wheel-of-fortune Hmmm
-const measureClickVelocity = () => {
-    const results = document.getElementById('results');
-    const distance = secondAngle - firstAngle;
-    clickVelocity = Math.abs(distance / clickDuration); // Number of revolutions per second
-    // TODO: Get decel
-    // TODO: 'Backwards' spins
-    // TODO: Use timeline to model deceleration
-    gsap.fromTo(
-        '#circle-svg',
-        {
-            rotation: draggableCircle.endRotation
-        },
-        {
-            rotation: draggableCircle.endRotation + (360 * clickVelocity * 3),
-            duration: 3,
-            onDragStart: () => { results.style.visibility = 'hidden' },
-            onInterrupt: () => onWheelStop(),
-            onComplete: () => onWheelStop()
-        });
-
-    resetDragValues();
-}
-
-const resetChart = () => {
-    clearInterval();
-    document.getElementById('circle-svg').innerHTML = '';
-    drawChart();
-}
-
 // TODO: Factor in active vs inactive
 const populateLists = (place = null) => {
     if (place) {
@@ -219,19 +152,6 @@ const populateProfileDropdown = (profile = null) => {
     else profiles.forEach(createOption)
 }
 
-const clearLists = () => {
-    const placeList = document.getElementById('place-list');
-    const historyList = document.getElementById('history-list');
-    placeList.innerHTML = '';
-    historyList.innerHTML = '';
-}
-
-const clearDropdown = () => {
-    const dropdown = document.getElementById('profile-dropdown');
-    dropdown.innerHTML = '';
-    populateProfileDropdown('All');
-}
-
 // TODO: Location-based lists / profiles
 // TODO: Add ability to remove items
 // TODO: In local storage, maybe add a param to track how many times a place has come up, and store if its 'active' or not
@@ -249,64 +169,3 @@ const addItemToHistoryList = (item) => {
     historyListItem.appendChild(document.createTextNode(`${item.name} (${item.timesChosen} Times)`));
     historyList.appendChild(historyListItem);
 }
-
-const loadFromLocalStorage = () => {
-    plcs = localStorage.getItem(storageKeys.places);
-    prfls = localStorage.getItem(storageKeys.profiles);
-
-    if (plcs) JSON.parse(plcs).forEach(p => places.push(p));
-    if (prfls) JSON.parse(prfls).forEach(p => profiles.push(p));
-}
-
-const updateLocalStorage = (key, values) => localStorage.setItem(key, JSON.stringify(values));
-
-const updatePlacesLocalStorage = () => updateLocalStorage(storageKeys.places, places);
-
-const updateProfilesLocalStorage = () => updateLocalStorage(storageKeys.profiles, profiles);
-
-// TODO: Allow them to add to 'Available' list rather than 'Active' list
-// TODO: When no more force, use friction constant
-// TODO: Add ability to delete places
-// TODO: Populate 'available places'
-const handleAddPlaceClicked = () => {
-    draggableCircle?.kill();
-
-    if (places.length === MAX_SLICES) return resetChart();
-    const inputValue = document.getElementById('place-input').value;
-
-    if (!inputValue) return resetChart();
-
-    const place = Place(inputValue, 0, true);
-    if (places.map(p => p.name).includes(place.name)) { alert('This place has already been entered.'); return resetChart(); }
-
-    places.push(place);
-    populateLists(place);
-    updatePlacesLocalStorage();
-    resetChart();
-}
-
-const handleAddProfileClicked = () => {
-    const inputValue = document.getElementById('profile-input').value;
-
-    if (!inputValue) return; 
-    if (profiles.includes(inputValue)) alert('This profile has already been entered.');
-
-    profiles.push(inputValue);
-
-    populateProfileDropdown(inputValue);
-    updateProfilesLocalStorage();
-    setProfileDropdownStatus();
-}
-
-const handleClearAllClicked = () => {
-    const r = confirm("Are you sure you want to clear your data? This will delete all profiles, places, and history. You can't get this back.");
-    if (r) {
-        localStorage.clear();
-        places = profiles = []
-        clearLists();
-        clearDropdown();
-        resetChart();
-    }
-}
-
-const trackClickDuration = () => clickDuration += 1;
