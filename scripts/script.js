@@ -32,7 +32,6 @@ const initialize = () => {
 
 // TODO: If 'all' is checked when the user has no profiles, record 'all' as its profile in localStorage
 // TODO: Remove a profile
-// TODO: Limit place list to have 8 items -- can't drag more onto it
 
 // https://stackoverflow.com/questions/52039421/java-2d-slow-down-rotation-like-a-wheel-of-fortune Hmmm
 const measureClickVelocity = () => {

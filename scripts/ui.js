@@ -268,7 +268,12 @@ const initializeSwappableLists = () => {
 
     const sortable = (list) =>
         new Sortable(list, {
-            group: 'placeLists',
+            group: {
+                name: 'placeLists',
+                put: (to) => { 
+                    if (list === placeList) return to.el.children.length !== 8 
+                }
+            },
             animation: 150,
             onAdd: (evt) => {
                 const item = evt.item;
