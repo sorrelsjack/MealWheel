@@ -83,14 +83,16 @@ const handleClearAllClicked = () => {
 
 const handleWheelStop = () => {
     resetDragValues();
-    places.forEach(p => {
+    places.filter(p => p.active).forEach(p => {
         if (Draggable.hitTest(`#${p.name.replace(' ', '-')}-path`, '#indicator', 30) && clickDuration === 0) {
             results.innerText = `Looks like you're eating at ${p.name}!`
             results.style.visibility = 'visible';
             const place = places.find(pl => p.name === pl.name);
             place.timesChosen += 1;
             document.getElementById('history-list').innerHTML = '';
-            places.forEach(pl => addItemToHistoryList(pl));
+            places.forEach(pl => { 
+                if (pl.active) addItemToHistoryList(pl) 
+            });
             updatePlacesLocalStorage();
         }
     });
