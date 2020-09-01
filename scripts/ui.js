@@ -7,6 +7,7 @@ const svgNS = 'http://www.w3.org/2000/svg';
 let colors = ['#5390d9', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51', '#ef476f', '#bc00dd', '#6a00f4']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
 
 // TODO: FIx issue where longer text stretched into adjacent slice...
+// TODO: Fix issue where add button doesnt work
 // Credit: https://bufferwall.com/posts/330881001ji1a/
 const drawChart = () => {
     resetDragValues();
@@ -280,6 +281,7 @@ const initializeSwappableLists = () => {
                 places.find(p => p.name === item.textContent).active = evt.to === placeList ? true : false;
                 updatePlacesLocalStorage();
                 resetChart();
+                addItemToHistoryList(places.find(p => p.name === item.textContent));
             }
         })
 
