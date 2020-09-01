@@ -71,7 +71,7 @@ const drawChart = () => {
         group.setAttribute('transform', `${item.groupTransform}`);
 
         const path = document.createElementNS(svgNS, 'path');
-        path.setAttribute('id', `${item.text.replace(' ', '-')}-path`);
+        path.setAttribute('id', `${formatToId(item.text)}-path`);
         path.setAttribute('d', `${item.d}`);
         path.setAttribute('fill', `${colors[i]}`);
 

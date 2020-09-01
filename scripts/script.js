@@ -94,6 +94,8 @@ const getProfilesToAddTo = () => {
     return toAddTo;
 }
 
+const formatToId = (string) => string.replace(' ', '-').replace(/[\W_]+/g, '');
+
 const loadPlacesForProfile = () => places = activeProfile !== profileForAll ? placesFromStorage.filter(p => p.cities.includes(activeProfile) || !p.cities.length) : placesFromStorage;
 
 const updateLocalStorage = (key, values) => {
