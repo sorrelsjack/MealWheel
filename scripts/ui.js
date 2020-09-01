@@ -277,7 +277,6 @@ const initializeSwappableLists = () => {
         else { removeItemFromHistoryList(item) }
     }
 
-    // TODO: Dragging an element that is later in the alphabet than the one above it causes odd things to happen
     const sortable = (list) =>
         new Sortable(list, {
             group: {
@@ -288,7 +287,6 @@ const initializeSwappableLists = () => {
                 }
             },
             animation: 150,
-            onRemove: (evt) => handleItemMovement(evt),
             onAdd: (evt) => handleItemMovement(evt)
         })
 
@@ -323,11 +321,4 @@ const addItemToAvailableList = (item) => {
     availableListItem.appendChild(document.createTextNode(item.name));
     availableListItem.appendChild(createCancelIcon(item));
     availableList.appendChild(availableListItem);
-
-    availablePlaceList = new Sortable(availableList, {
-        swap: true,
-        swapClass: 'highlight',
-        group: 'placeLists',
-        animation: 150
-    })
 }
