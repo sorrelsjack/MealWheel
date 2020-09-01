@@ -13,7 +13,7 @@ let clickDuration = 0;
 let clickDurationIntervalId = null;
 
 const initialDeceleration = .3;
-let currentDeceleration = initialDeceleration;
+let currentDeceleration = initialDeceleration; // TODO: Maybe add an element of randomness for this
 
 let spinMultipliers = [];
 let spinAnimation = null;

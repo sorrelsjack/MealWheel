@@ -4,7 +4,6 @@ const svgNS = 'http://www.w3.org/2000/svg';
 
 let colors = ['#5390d9', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51', '#ef476f', '#bc00dd', '#6a00f4']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
 
-// TODO: Fix bug where no circle shows up if there's just one place / add message that there needs to be two places
 // TODO: FIx issue where longer text stretched into adjacent slice...
 // Credit: https://bufferwall.com/posts/330881001ji1a/
 const drawChart = () => {
@@ -254,25 +253,38 @@ const populateProfileCheckboxes = (profile = null) => {
     else profiles.forEach(createCheckbox);
 }
 
+// TODO: Add functionality to delete that is attached to this icon
+const createCancelIcon = () => {
+    const cancelIcon = document.createElement('i');
+    cancelIcon.className = 'list-icon fa fa-times';
+    return cancelIcon;
+}
+
 // TODO: Add ability to remove items
 // TODO: 'Sub' previous items back into the list?
 const addItemToPlaceList = (item) => {
     const placeList = document.getElementById('place-list');
-    const placeListItem = document.createElement('li');
+    const placeListItem = document.createElement('p');
+    placeListItem.className = 'list-item';
     placeListItem.appendChild(document.createTextNode(item.name));
+    placeListItem.appendChild(createCancelIcon());
     placeList.appendChild(placeListItem);
 }
 
 const addItemToHistoryList = (item) => {
     const historyList = document.getElementById('history-list');
-    const historyListItem = document.createElement('li');
+    const historyListItem = document.createElement('p');
+    historyListItem.className = 'list-item';
     historyListItem.appendChild(document.createTextNode(`${item.name} (${item.timesChosen} Times)`));
+    historyListItem.appendChild(createCancelIcon());
     historyList.appendChild(historyListItem);
 }
 
 const addItemToAvailableList = (item) => {
     const availableList = document.getElementById('available-place-list');
-    const availableListItem = document.createElement('li');
+    const availableListItem = document.createElement('p');
+    availableListItem.className = 'list-item';
     availableListItem.appendChild(document.createTextNode(item.name));
+    availableListItem.appendChild(createCancelIcon());
     availableList.appendChild(availableListItem);
 }

@@ -6,6 +6,7 @@
     <link rel="icon" type="image/png" href="assets/favicon.ico">
     <link rel="stylesheet" type="text/css" href="styles.css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <script src="scripts/script.js"></script>
     <script src="scripts/place.js"></script>
     <script src="scripts/storageKeys.js"></script>
@@ -30,17 +31,24 @@
         <button onclick="handleClearAllClicked()">Clear All Data</button>
     </div>
     <h1>Meal Wheel</h1>
-    <div class="note-container">Note: The wheel will pause its spin if you go to another tab</div>
+    <div class="note-container">
+        Note: The wheel will pause its spin if you go to another tab
+        <br>Note: Add two places for the wheel to show up
+    </div>
     <div class="results-container" id="results"></div>
     <div class="wrapper">
         <div class="side-container column">
             <div>
                 <h2>Place List</h2>
-                <ul id="place-list"></ul>
+                <div class="list" id="place-list">
+
+                </div>
             </div>
             <div>
                 <h2>Available Places</h2>
-                <ul id="available-place-list"></ul>
+                <div class="list" id="available-place-list">
+
+                </div>
             </div>
         </div>
         <div class="main-container column">
@@ -68,7 +76,9 @@
         <div class="side-container column">
             <div>
                 <h2>History</h2>
-                <ul id="history-list"></ul>
+                <div class="list" id="history-list">
+
+                </div>
             </div>
             <div>
                 <h2>Suggestions?</h2>
