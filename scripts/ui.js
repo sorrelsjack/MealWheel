@@ -1,5 +1,7 @@
 let draggableCircle = null;
 let svg = null;
+let activePlaceList = null;
+let availablePlaceList = null;
 const svgNS = 'http://www.w3.org/2000/svg';
 
 let colors = ['#5390d9', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51', '#ef476f', '#bc00dd', '#6a00f4']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
@@ -94,7 +96,7 @@ const drawChart = () => {
     draggableCircle.addEventListener('press', () => {
         clickDurationIntervalId = window.setInterval(trackClickDuration, 1);
         firstAngle = draggableCircle.rotation;
-        
+
         if (gsap.isTweening('#circle-svg')) {
             spinAnimation?.kill();
             resetDragValues();
@@ -104,7 +106,7 @@ const drawChart = () => {
 
     draggableCircle.addEventListener('dragend', () => {
         if (gsap.isTweening('#circle-svg')) return;
-        
+
         window.clearInterval(clickDurationIntervalId);
         secondAngle = draggableCircle.endRotation;
         measureClickVelocity();
@@ -256,11 +258,30 @@ const populateProfileCheckboxes = (profile = null) => {
 const createCancelIcon = (item) => {
     const cancelIcon = document.createElement('i');
     cancelIcon.className = 'list-icon fa fa-times';
-    cancelIcon.addEventListener('click', (event) => handleCancelIconClicked(event, item.name) );
+    cancelIcon.addEventListener('click', (event) => handleCancelIconClicked(event, item.name));
     return cancelIcon;
 }
 
-// TODO: 'Sub' previous items back into the list?
+const initializeSwappableLists = () => {
+    const placeList = document.getElementById('place-list');
+    const availableList = document.getElementById('available-place-list');
+
+    const sortable = (list) =>
+        new Sortable(list, {
+            group: 'placeLists',
+            animation: 150,
+            onAdd: (evt) => {
+                const item = evt.item;
+                places.find(p => p.name === item.textContent).active = evt.to === placeList ? true : false;
+                updatePlacesLocalStorage();
+                resetChart();
+            }
+        })
+
+    activePlaceList = sortable(placeList);
+    availablePlaceList = sortable(availableList)
+}
+
 const addItemToPlaceList = (item) => {
     const placeList = document.getElementById('place-list');
     const placeListItem = document.createElement('p');
@@ -285,4 +306,11 @@ const addItemToAvailableList = (item) => {
     availableListItem.appendChild(document.createTextNode(item.name));
     availableListItem.appendChild(createCancelIcon(item));
     availableList.appendChild(availableListItem);
+
+    availablePlaceList = new Sortable(availableList, {
+        swap: true,
+        swapClass: 'highlight',
+        group: 'placeLists',
+        animation: 150
+    })
 }

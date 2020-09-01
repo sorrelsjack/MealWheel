@@ -77,6 +77,9 @@ h3 {
 }
 .list-item {
     margin-bottom: 10px;
+    border: 1px solid black;
+    width: 50%;
+    padding: 7px;
 }
 .list-icon {
     margin-left: 10px;

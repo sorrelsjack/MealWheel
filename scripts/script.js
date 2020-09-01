@@ -26,11 +26,13 @@ const initialize = () => {
     setProfileElementStatuses();
     setRadioButtonStatuses();
     populateLists();
+    initializeSwappableLists();
     drawChart();
 }
 
 // TODO: If 'all' is checked when the user has no profiles, record 'all' as its profile in localStorage
 // TODO: Remove a profile
+// TODO: Limit place list to have 8 items -- can't drag more onto it
 
 // https://stackoverflow.com/questions/52039421/java-2d-slow-down-rotation-like-a-wheel-of-fortune Hmmm
 const measureClickVelocity = () => {
@@ -95,7 +97,10 @@ const getProfilesToAddTo = () => {
 
 const loadPlacesForProfile = () => places = activeProfile !== profileForAll ? placesFromStorage.filter(p => p.cities.includes(activeProfile) || !p.cities.length) : placesFromStorage;
 
-const updateLocalStorage = (key, values) => localStorage.setItem(key, JSON.stringify(values));
+const updateLocalStorage = (key, values) => {
+    if (key === storageKeys.places) placesFromStorage = values;
+    localStorage.setItem(key, JSON.stringify(values));
+}
 
 const updatePlacesLocalStorage = () => updateLocalStorage(storageKeys.places, places);
 
