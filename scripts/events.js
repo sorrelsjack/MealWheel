@@ -1,6 +1,4 @@
-// TODO: Allow them to add to 'Available' list rather than 'Active' list
 // TODO: Add ability to delete places
-// TODO: Populate 'available places'
 const handleAddPlaceClicked = () => {
     draggableCircle?.kill();
 
@@ -9,7 +7,7 @@ const handleAddPlaceClicked = () => {
 
     if (!inputValue) return resetChart();
 
-    const place = Place(inputValue, 0, true, getProfilesToAddTo());
+    const place = Place(inputValue, 0, document.getElementById('add-active-place-option').checked, getProfilesToAddTo());
     if (places.map(p => p.name).includes(place.name)) { alert('This place has already been entered.'); return resetChart(); }
 
     places.push(place);

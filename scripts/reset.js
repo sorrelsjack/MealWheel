@@ -26,8 +26,8 @@ const resetCheckBoxes = () => {
 const clearLists = () => {
     const placeList = document.getElementById('place-list');
     const historyList = document.getElementById('history-list');
-    placeList.innerHTML = '';
-    historyList.innerHTML = '';
+    const availablePlaceList = document.getElementById('available-place-list');
+    placeList.innerHTML = historyList.innerHTML = availablePlaceList.innerHTML = '';
 }
 
 const clearDropdown = () => {

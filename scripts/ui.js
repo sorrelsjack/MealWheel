@@ -4,6 +4,7 @@ const svgNS = 'http://www.w3.org/2000/svg';
 
 let colors = ['#5390d9', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51', '#ef476f', '#bc00dd', '#6a00f4']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
 
+// TODO: Button to spin it in case the user cannot
 // TODO: Fix bug where no circle shows up if there's just one place / add message that there needs to be two places
 // TODO: FIx issue where longer text stretched into adjacent slice...
 // Credit: https://bufferwall.com/posts/330881001ji1a/
@@ -20,7 +21,9 @@ const drawChart = () => {
     const cy = 300;
     const radius = 300;
 
-    let percent = 100 / places.length;
+    const activePlaces = places.filter(p => p.active);
+
+    let percent = 100 / activePlaces.length;
     let total = 0;
     var offset = 0;
     var offset2 = 0;
@@ -30,14 +33,15 @@ const drawChart = () => {
     var la;
     var radians;
 
-    for (var i = 0; i < places.length; i++)
+
+    for (var i = 0; i < activePlaces.length; i++)
         total += percent;
 
-    for (var i = 0; i < places.length; i++) {
+    for (var i = 0; i < activePlaces.length; i++) {
         var item = {};
 
         item.index = i;
-        item.text = places[i].name;
+        item.text = activePlaces[i].name;
         radians = (((percent / total) * 360) * Math.PI) / 180;
         offset2 = ((offset / total) * 360);
 
@@ -175,17 +179,22 @@ const setPlaceRadioButtonsStatus = () => {
     else if (places < MAX_SLICES) active.disabled = false;
 }
 
-// TODO: Factor in active vs inactive
 const populateLists = (place = null) => {
     if (place) {
-        addItemToPlaceList(place);
-        addItemToHistoryList(place);
+        if (place.active) {
+            addItemToPlaceList(place);
+            addItemToHistoryList(place);
+        }
+        else addItemToAvailableList(place);
     }
     else {
         clearLists();
         places.forEach(p => {
-            addItemToPlaceList(p)
-            addItemToHistoryList(p)
+            if (p.active) {
+                addItemToPlaceList(p);
+                addItemToHistoryList(p);
+            }
+            else addItemToAvailableList(p);
         });
     }
 }
@@ -247,7 +256,6 @@ const populateProfileCheckboxes = (profile = null) => {
 }
 
 // TODO: Add ability to remove items
-// TODO: In local storage, store if its 'active' or not
 // TODO: 'Sub' previous items back into the list?
 const addItemToPlaceList = (item) => {
     const placeList = document.getElementById('place-list');
@@ -261,4 +269,11 @@ const addItemToHistoryList = (item) => {
     const historyListItem = document.createElement('li');
     historyListItem.appendChild(document.createTextNode(`${item.name} (${item.timesChosen} Times)`));
     historyList.appendChild(historyListItem);
+}
+
+const addItemToAvailableList = (item) => {
+    const availableList = document.getElementById('available-place-list');
+    const availableListItem = document.createElement('li');
+    availableListItem.appendChild(document.createTextNode(item.name));
+    availableList.appendChild(availableListItem);
 }
