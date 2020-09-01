@@ -267,26 +267,33 @@ const initializeSwappableLists = () => {
     const placeList = document.getElementById('place-list');
     const availableList = document.getElementById('available-place-list');
 
+    const handleItemMovement = (evt) => {
+        console.log('On remove')
+        const item = evt.item;
+        places.find(p => p.name === item.textContent).active = evt.to === placeList ? true : false;
+        updatePlacesLocalStorage();
+        resetChart();
+        if (evt.to === placeList) addItemToHistoryList(places.find(p => p.name === item.textContent));
+        else { removeItemFromHistoryList(item) }
+    }
+
+    // TODO: Dragging an element that is later in the alphabet than the one above it causes odd things to happen
     const sortable = (list) =>
         new Sortable(list, {
             group: {
+                sort: false,
                 name: 'placeLists',
                 put: (to) => { 
-                    if (list === placeList) return to.el.children.length !== 8 
+                    if (list === placeList && to.el.children.length === 8) return false;
                 }
             },
             animation: 150,
-            onAdd: (evt) => {
-                const item = evt.item;
-                places.find(p => p.name === item.textContent).active = evt.to === placeList ? true : false;
-                updatePlacesLocalStorage();
-                resetChart();
-                addItemToHistoryList(places.find(p => p.name === item.textContent));
-            }
+            onRemove: (evt) => handleItemMovement(evt),
+            onAdd: (evt) => handleItemMovement(evt)
         })
 
     activePlaceList = sortable(placeList);
-    availablePlaceList = sortable(availableList)
+    availablePlaceList = sortable(availableList);
 }
 
 const addItemToPlaceList = (item) => {
@@ -301,10 +308,13 @@ const addItemToPlaceList = (item) => {
 const addItemToHistoryList = (item) => {
     const historyList = document.getElementById('history-list');
     const historyListItem = document.createElement('p');
+    historyListItem.id = `${item.name}-history-list-item`;
     historyListItem.className = 'list-item';
     historyListItem.appendChild(document.createTextNode(`${item.name} (${item.timesChosen} Times)`));
     historyList.appendChild(historyListItem);
 }
+
+const removeItemFromHistoryList = (item) => Array.from(document.getElementById('history-list').childNodes).find(n => n.id.toLowerCase() === `${item.textContent.toLowerCase()}-history-list-item`)?.remove();
 
 const addItemToAvailableList = (item) => {
     const availableList = document.getElementById('available-place-list');
