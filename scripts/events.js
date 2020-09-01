@@ -83,7 +83,7 @@ const handleClearAllClicked = () => {
 const handleWheelStop = () => {
     resetDragValues();
     places.filter(p => p.active).forEach(p => {
-        if (Draggable.hitTest(`#${p.name.replace(' ', '-')}-path`, '#indicator', 30) && clickDuration === 0) {
+        if (Draggable.hitTest(`#${p.name.replace(' ', '-')}-path`, '#indicator', '50%') && clickDuration === 0) {
             results.innerText = `Looks like you're eating at ${p.name}!`
             results.style.visibility = 'visible';
             const place = places.find(pl => p.name === pl.name);

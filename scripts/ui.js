@@ -6,7 +6,6 @@ const svgNS = 'http://www.w3.org/2000/svg';
 
 let colors = ['#5390d9', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51', '#ef476f', '#bc00dd', '#6a00f4']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
 
-// TODO: FIx issue where longer text stretched into adjacent slice...
 // TODO: Fix issue where add button doesnt work
 // Credit: https://bufferwall.com/posts/330881001ji1a/
 const drawChart = () => {
@@ -60,7 +59,7 @@ const drawChart = () => {
 
         item.x = x;
         item.y = y;
-        item.textTransform = `rotate(${-offset2},${x},${y})`;
+        item.textTransform = `rotate(${-(360 / activePlaces.length)},${x},${y})`;
 
         offset += percent;
         arr.push(item);
@@ -80,7 +79,7 @@ const drawChart = () => {
 
         const text = document.createElementNS(svgNS, 'text');
         text.setAttribute('fill', 'white');
-        text.setAttribute('font-size', 30);
+        text.setAttribute('font-size', item.text.length > 5 ? 30 - item.text.length : 30);
         text.setAttribute('x', item.x);
         text.setAttribute('y', item.y);
         text.setAttribute('transform', item.textTransform);
@@ -106,8 +105,6 @@ const drawChart = () => {
     });
 
     draggableCircle.addEventListener('dragend', () => {
-        if (gsap.isTweening('#circle-svg')) return;
-
         window.clearInterval(clickDurationIntervalId);
         secondAngle = draggableCircle.endRotation;
         measureClickVelocity();
