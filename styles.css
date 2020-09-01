@@ -80,6 +80,10 @@ h3 {
 }
 .list-icon {
     margin-left: 10px;
+    color: rgba(0, 0, 0, .33)
+}
+.list-icon:active {
+    color: rgba(0, 0, 0, 1)
 }
 label {
     margin-left: 5px;

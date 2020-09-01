@@ -113,7 +113,7 @@ const drawChart = () => {
 
 const setIndicatorVisibility = () => {
     const indicator = document.getElementById('indicator');
-    if (places.length < 2) indicator.style.visibility = 'hidden';
+    if (places.filter(p => p.active).length < 2) indicator.style.visibility = 'hidden';
     else indicator.style.visibility = 'visible';
 }
 
@@ -253,21 +253,20 @@ const populateProfileCheckboxes = (profile = null) => {
     else profiles.forEach(createCheckbox);
 }
 
-// TODO: Add functionality to delete that is attached to this icon
-const createCancelIcon = () => {
+const createCancelIcon = (item) => {
     const cancelIcon = document.createElement('i');
     cancelIcon.className = 'list-icon fa fa-times';
+    cancelIcon.addEventListener('click', (event) => handleCancelIconClicked(event, item.name) );
     return cancelIcon;
 }
 
-// TODO: Add ability to remove items
 // TODO: 'Sub' previous items back into the list?
 const addItemToPlaceList = (item) => {
     const placeList = document.getElementById('place-list');
     const placeListItem = document.createElement('p');
     placeListItem.className = 'list-item';
     placeListItem.appendChild(document.createTextNode(item.name));
-    placeListItem.appendChild(createCancelIcon());
+    placeListItem.appendChild(createCancelIcon(item));
     placeList.appendChild(placeListItem);
 }
 
@@ -276,7 +275,6 @@ const addItemToHistoryList = (item) => {
     const historyListItem = document.createElement('p');
     historyListItem.className = 'list-item';
     historyListItem.appendChild(document.createTextNode(`${item.name} (${item.timesChosen} Times)`));
-    historyListItem.appendChild(createCancelIcon());
     historyList.appendChild(historyListItem);
 }
 
@@ -285,6 +283,6 @@ const addItemToAvailableList = (item) => {
     const availableListItem = document.createElement('p');
     availableListItem.className = 'list-item';
     availableListItem.appendChild(document.createTextNode(item.name));
-    availableListItem.appendChild(createCancelIcon());
+    availableListItem.appendChild(createCancelIcon(item));
     availableList.appendChild(availableListItem);
 }
