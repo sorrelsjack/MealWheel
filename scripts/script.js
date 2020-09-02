@@ -13,7 +13,7 @@ let clickDuration = 0;
 let clickDurationIntervalId = null;
 
 const initialDeceleration = .3;
-let currentDeceleration = initialDeceleration; // TODO: Maybe add an element of randomness for this
+let currentDeceleration = initialDeceleration;
 
 let spinMultipliers = [];
 let spinAnimation = null;
@@ -30,7 +30,7 @@ const initialize = () => {
     drawChart();
 }
 
-// TODO: If 'all' is checked when the user has no profiles, record 'all' as its profile in localStorage
+const getRandomFloat = () => (Math.random() * (.400 - .1) + .1)
 // TODO: Remove a profile
 
 // https://stackoverflow.com/questions/52039421/java-2d-slow-down-rotation-like-a-wheel-of-fortune Hmmm
@@ -38,6 +38,7 @@ const measureClickVelocity = () => {
     const results = document.getElementById('results');
     const distance = secondAngle - firstAngle;
     clickVelocity = Math.abs(distance / clickDuration); // Number of revolutions per second
+    const decelerationIncrement = getRandomFloat();
 
     let lastMultiplier = 0;
 
@@ -46,7 +47,7 @@ const measureClickVelocity = () => {
         lastMultiplier = clickVelocity - currentDeceleration;
         if (lastMultiplier < 0) break;
         spinMultipliers.push(lastMultiplier);
-        currentDeceleration += .3;
+        currentDeceleration += decelerationIncrement;
     } while (lastMultiplier > 0)
 
     let cumulativeRotation = draggableCircle.rotation;

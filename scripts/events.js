@@ -1,7 +1,5 @@
 const handleAddPlaceClicked = () => {
-    draggableCircle?.kill();
-
-    if (places.length === MAX_SLICES) return resetChart();
+    if (places.filter(p => p.active).length === MAX_SLICES) return resetChart();
     const inputValue = document.getElementById('place-input').value;
 
     if (!inputValue) return resetChart();

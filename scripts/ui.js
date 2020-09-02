@@ -6,7 +6,6 @@ const svgNS = 'http://www.w3.org/2000/svg';
 
 let colors = ['#5390d9', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51', '#ef476f', '#bc00dd', '#6a00f4']; // https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51
 
-// TODO: Fix issue where add button doesnt work
 // Credit: https://bufferwall.com/posts/330881001ji1a/
 const drawChart = () => {
     resetDragValues();
@@ -91,7 +90,7 @@ const drawChart = () => {
         svg.appendChild(group);
     }
 
-    draggableCircle = Draggable.create('#circle-svg', { type: 'rotation', dragResistance: 0 })[0];
+    draggableCircle = Draggable.create('#circle-svg', { type: 'rotation', dragResistance: .3 })[0];
 
     draggableCircle.addEventListener('press', () => {
         clickDurationIntervalId = window.setInterval(trackClickDuration, 1);
@@ -103,6 +102,10 @@ const drawChart = () => {
             window.clearInterval(clickDurationIntervalId);
         }
     });
+
+    draggableCircle.addEventListener('dragstart', () => {
+        document.getElementById('results').style.visibility = 'hidden';
+    })
 
     draggableCircle.addEventListener('dragend', () => {
         window.clearInterval(clickDurationIntervalId);
@@ -138,7 +141,7 @@ const setInputStatus = () => {
     const active = document.getElementById('add-active-place-option');
     const available = document.getElementById('add-available-place-option');
 
-    const ableToInput = (active.checked || available.checked) && places.length < MAX_SLICES;
+    const ableToInput = (active.checked || available.checked) && places.filter(p => p.active).length < MAX_SLICES;
 
     if (!ableToInput) {
         input.value = '';
@@ -221,7 +224,6 @@ const populateProfileDropdown = (profile = null) => {
     if (activeProfile) document.getElementById(`profile-dropdown-option-${activeProfile.toLowerCase()}`).selected = "selected";
 }
 
-// TODO: Deal with 'all' checkbox if a new thing is added. Should be checked or unchecked
 const populateProfileCheckboxes = (profile = null) => {
     const checkboxContainer = document.getElementById('add-to-profile-checkboxes');
 
