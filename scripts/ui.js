@@ -16,6 +16,8 @@ const drawChart = () => {
 
     svg = document.getElementById('circle-svg');
 
+    const convertRadiansToDegrees = (radians) => radians * (180 / Math.PI);;
+
     const cx = 300;
     const cy = 300;
     const radius = 300;
@@ -58,7 +60,7 @@ const drawChart = () => {
 
         item.x = x;
         item.y = y;
-        item.textTransform = `rotate(${-(360 / activePlaces.length)},${x},${y})`;
+        item.textTransform = `rotate(${-(360 / activePlaces.length)},${x},${y})`; // TODO: Try percent here for the first value
 
         offset += percent;
         arr.push(item);
@@ -267,7 +269,6 @@ const initializeSwappableLists = () => {
     const availableList = document.getElementById('available-place-list');
 
     const handleItemMovement = (evt) => {
-        console.log('On remove')
         const item = evt.item;
         places.find(p => p.name === item.textContent).active = evt.to === placeList ? true : false;
         updatePlacesLocalStorage();
@@ -296,7 +297,10 @@ const initializeSwappableLists = () => {
 const addItemToPlaceList = (item) => {
     const placeList = document.getElementById('place-list');
     const placeListItem = document.createElement('p');
-    placeListItem.className = 'list-item';
+
+    placeListItem.classList.add('list-item');
+    placeListItem.classList.add('truncate');
+
     placeListItem.appendChild(document.createTextNode(item.name));
     placeListItem.appendChild(createCancelIcon(item));
     placeList.appendChild(placeListItem);
@@ -305,9 +309,20 @@ const addItemToPlaceList = (item) => {
 const addItemToHistoryList = (item) => {
     const historyList = document.getElementById('history-list');
     const historyListItem = document.createElement('p');
+    const textContainer = document.createElement('div');
+    const nameContainer = document.createElement('div');
+    const timesContainer = document.createElement('div');
+
     historyListItem.id = `${item.name}-history-list-item`;
-    historyListItem.className = 'list-item';
-    historyListItem.appendChild(document.createTextNode(`${item.name} (${item.timesChosen} Times)`));
+    historyListItem.classList.add('list-item');
+    nameContainer.className = 'truncate';
+    timesContainer.className = 'no-wrap';
+
+    nameContainer.appendChild(document.createTextNode(item.name));
+    timesContainer.appendChild(document.createTextNode(` (${item.timesChosen} Time(s))`));
+    textContainer.appendChild(nameContainer);
+    textContainer.appendChild(timesContainer);
+    historyListItem.appendChild(textContainer)
     historyList.appendChild(historyListItem);
 }
 
@@ -316,7 +331,9 @@ const removeItemFromHistoryList = (item) => Array.from(document.getElementById('
 const addItemToAvailableList = (item) => {
     const availableList = document.getElementById('available-place-list');
     const availableListItem = document.createElement('p');
+
     availableListItem.className = 'list-item';
+    
     availableListItem.appendChild(document.createTextNode(item.name));
     availableListItem.appendChild(createCancelIcon(item));
     availableList.appendChild(availableListItem);
