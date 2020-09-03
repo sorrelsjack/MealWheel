@@ -4,8 +4,7 @@ let placesFromStorage = [];
 let places = [];
 let profiles = [];
 
-const profileForAll = 'All';
-let activeProfile = profileForAll;
+let activeProfile = null;
 
 let firstAngle = secondAngle = 0;
 
@@ -78,7 +77,7 @@ const loadFromLocalStorage = () => {
 
     if (plcs) JSON.parse(plcs).forEach(p => placesFromStorage.push(p));
     if (prfls) JSON.parse(prfls).forEach(p => profiles.push(p));
-    activeProfile = actvPrfl ? JSON.parse(actvPrfl) : profileForAll;
+    activeProfile = JSON.parse(actvPrfl);
 }
 
 const getProfilesToAddTo = () => {
@@ -97,11 +96,15 @@ const getProfilesToAddTo = () => {
 
 const formatToId = (string) => string.replace(' ', '-').replace(/[\W_]+/g, '');
 
-const loadPlacesForProfile = () => places = activeProfile !== profileForAll ? placesFromStorage.filter(p => p.cities.includes(activeProfile) || !p.cities.length) : placesFromStorage;
+const loadPlacesForProfile = () => places = activeProfile ? placesFromStorage.filter(p => p?.cities?.includes(activeProfile) || !p?.cities?.length) : [];
 
 const updateLocalStorage = (key, values) => {
-    if (key === storageKeys.places) placesFromStorage = values;
-    localStorage.setItem(key, JSON.stringify(values));
+    valuesToStringify = values;
+    if (key === storageKeys.places) {
+        placesFromStorage = deepmerge(placesFromStorage, values);
+        placesFromStorage = valuesToStringify = _.uniqBy(placesFromStorage, 'name');
+    }
+    localStorage.setItem(key, JSON.stringify(valuesToStringify));
 }
 
 const updatePlacesLocalStorage = () => updateLocalStorage(storageKeys.places, places);

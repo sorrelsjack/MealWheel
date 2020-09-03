@@ -22,38 +22,24 @@ const handleAddProfileClicked = () => {
     profiles.push(inputValue);
 
     activeProfile = inputValue;
+    updatePlacesLocalStorage();
     updateActiveProfileLocalStorage();
+    loadPlacesForProfile();
     populateProfileElements(inputValue);
     updateProfilesLocalStorage();
     setProfileElementStatuses();
+    populateLists();
+    resetChart();
 }
 
 const handleProfileSelected = (e) => {
     activeProfile = e.target.value;
-
-    const checkbox = document.getElementById(`profile-checkbox-${activeProfile.toLowerCase()}`);
-    checkbox.checked = true;
-
-    const checkboxes = document.querySelectorAll("[id^='profile-checkbox'");
-    checkboxes.forEach(c => {
-        if (activeProfile === profileForAll) c.checked = true;
-        else if (c.id !== checkbox.id) c.checked = false;
-    });
 
     updateActiveProfileLocalStorage();
     loadPlacesForProfile();
     setProfileElementStatuses();
     populateLists();
     resetChart();
-}
-
-const handleProfileCheckboxToggled = (e) => {
-    const checkboxes = document.querySelectorAll("[id^='profile-checkbox'");
-
-    checkboxes.forEach(c => {
-        if (e.target.id === 'profile-checkbox-all') { c.checked = e.target.checked; return; };
-        if (c.id !== e.target.id) c.checked = false;
-    });
 }
 
 const handleAddPlaceRadioButtonToggled = (e) => {
@@ -75,6 +61,7 @@ const handleClearAllClicked = () => {
         clearDropdown();
         resetCheckBoxes();
         resetChart();
+        setProfilePlaceholderVisibility();
     }
 }
 

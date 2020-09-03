@@ -19,8 +19,6 @@ const resetCheckBoxes = () => {
             document.getElementById(`${c.id}-label`)?.remove();
         }
     });
-
-    setProfileCheckboxesStatus();
 }
 
 const clearLists = () => {

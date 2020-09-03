@@ -143,7 +143,7 @@ const setInputStatus = () => {
     const active = document.getElementById('add-active-place-option');
     const available = document.getElementById('add-available-place-option');
 
-    const ableToInput = (active.checked || available.checked) && places.filter(p => p.active).length < MAX_SLICES;
+    const ableToInput = (active.checked || available.checked) && (places.filter(p => p.active).length < MAX_SLICES) && profiles.length;
 
     if (!ableToInput) {
         input.value = '';
@@ -154,7 +154,12 @@ const setInputStatus = () => {
 
 const setProfileElementStatuses = () => {
     setProfileDropdownStatus();
-    setProfileCheckboxesStatus();
+    setProfileCheckboxStatuses();
+}
+
+const setProfilePlaceholderVisibility = () => {
+    const placeholder = document.getElementById('placeholder-profile-dropdown-option');
+    placeholder.style.display = !profiles.length ? 'block' : 'none';
 }
 
 const setProfileDropdownStatus = () => {
@@ -164,12 +169,16 @@ const setProfileDropdownStatus = () => {
     else dropdown.disabled = false;
 }
 
-const setProfileCheckboxesStatus = () => {
-    const checkbox = document.getElementById('profile-checkbox-all');
+const setProfileCheckboxStatuses = () => {
+    if (!activeProfile) return;
 
-    if (!profiles.length) checkbox.disabled = checkbox.checked = true;
-    else if (profiles.length && activeProfile !== profileForAll) checkbox.checked = false;
-    else checkbox.disabled = false;
+    const checkbox = document.getElementById(`profile-checkbox-${activeProfile.toLowerCase()}`);
+    checkbox.checked = true;
+
+    const checkboxes = document.querySelectorAll("[id^='profile-checkbox'");
+    checkboxes.forEach(c => {
+        if (c.id !== checkbox.id) c.checked = false;
+    });
 }
 
 const setPlaceRadioButtonsStatus = () => {
@@ -223,6 +232,8 @@ const populateProfileDropdown = (profile = null) => {
     if (profile) createOption(profile);
     else profiles.forEach(createOption);
 
+    setProfilePlaceholderVisibility();
+
     if (activeProfile) document.getElementById(`profile-dropdown-option-${activeProfile.toLowerCase()}`).selected = "selected";
 }
 
@@ -237,11 +248,6 @@ const populateProfileCheckboxes = (profile = null) => {
         checkbox.name = value;
 
         checkbox.checked = activeProfile === value ? true : false;
-        checkbox.checked = activeProfile === profileForAll ? true : checkbox.checked;
-
-        checkbox.addEventListener('change', (event) => {
-            handleProfileCheckboxToggled(event);
-        });
 
         const label = document.createElement('label');
 
