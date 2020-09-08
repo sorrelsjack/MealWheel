@@ -85,7 +85,7 @@ const handleWheelStop = () => {
 
 const handleCancelIconClicked = (e, place) => {
     e.target.parentNode.remove();
-    places = places.filter(p => p.name.toLowerCase() !== place.toLowerCase());
+    places = placesFromStorage = places.filter(p => p.name.toLowerCase() !== place.toLowerCase());
     updatePlacesLocalStorage();
     setIndicatorVisibility();
     resetChart();
