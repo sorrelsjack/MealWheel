@@ -18,7 +18,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.0/Draggable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/mathusummut/confetti.js/confetti.min.js"></script>
+    <script src="node_modules/confetti-js/dist/index.min.js"></script>
 </head>
 
 <body onload="initialize()">
@@ -34,6 +34,7 @@
         <button onclick="handleClearAllClicked()">Clear All Data</button>
     </div>
     <h1>Meal Wheel</h1>
+    <canvas class="confetti" id="confetti"></canvas>
     <div class="note-container">
         Note: The wheel will pause its spin if you go to another tab
         <br>Note: Add two places for the wheel to show up

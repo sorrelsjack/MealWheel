@@ -16,7 +16,7 @@ const handleAddPlaceClicked = () => {
 const handleAddProfileClicked = () => {
     const inputValue = document.getElementById('profile-input').value;
 
-    if (!inputValue) return; 
+    if (!inputValue) return;
     if (profiles.includes(inputValue)) alert('This profile has already been entered.');
 
     profiles.push(inputValue);
@@ -47,7 +47,7 @@ const handleAddPlaceRadioButtonToggled = (e) => {
     const available = document.getElementById('add-available-place-option');
 
     if (e.target === active) available.checked = false;
-    else if (e.target === available ) active.checked = false;
+    else if (e.target === available) active.checked = false;
 
     setInputStatus();
 }
@@ -74,13 +74,16 @@ const handleWheelStop = () => {
             const place = places.find(pl => formatToId(p.name) === formatToId(pl.name));
             place.timesChosen += 1;
             document.getElementById('history-list').innerHTML = '';
-            places.forEach(pl => { 
-                if (pl.active) addItemToHistoryList(pl) 
+            places.forEach(pl => {
+                if (pl.active) addItemToHistoryList(pl)
             });
             updatePlacesLocalStorage();
         }
     });
-    confetti.start(1500);
+    var confettiSettings = { target: 'confetti', respawn: 'false' };
+    var confetti = new ConfettiGenerator(confettiSettings);
+    confetti.render();
+    window.setInterval(() => confetti.clear(), 2000);
 }
 
 const handleCancelIconClicked = (e, place) => {
